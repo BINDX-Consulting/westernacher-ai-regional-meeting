@@ -540,12 +540,12 @@ async function buildPresentation() {
     s.addShape(pres.shapes.RECTANGLE, {
       x: 0.45, y: 4.72, w: 2.6, h: 0.52,
       fill: { color: W.blue },
-      hyperlink: { url: "https://bindx-consulting.bindx-consulting.github.io/westernacher-ai-desk/westernacher_ai_desk.html" }
+      hyperlink: { url: "https://bindx-consulting.github.io/westernacher-ai-desk/wepulse.html" }
     });
     s.addText("▶   Launch Demo", {
       x: 0.45, y: 4.72, w: 2.6, h: 0.52,
       fontSize: 13, bold: true, color: W.black, align: "center", valign: "middle", fontFace: "Arial", margin: 0,
-      hyperlink: { url: "https://bindx-consulting.bindx-consulting.github.io/westernacher-ai-desk/westernacher_ai_desk.html" }
+      hyperlink: { url: "https://bindx-consulting.github.io/westernacher-ai-desk/wepulse.html" }
     });
     s.addText("Click to open in browser", {
       x: 3.18, y: 4.78, w: 2.5, h: 0.4,
@@ -569,7 +569,7 @@ async function buildPresentation() {
     s.addImage({ data: qrBlue, x: 6.9, y: 1.35, w: 2.7, h: 2.7 });
 
     // URL below QR
-    s.addText("bindx-consulting.github.io/westernacher-ai-desk", {
+    s.addText("bindx-consulting.github.io/westernacher-ai-desk/wepulse.html", {
       x: 6.7, y: 4.12, w: 2.8, h: 0.3,
       fontSize: 9, color: "555555", align: "center", fontFace: "Arial", margin: 0
     });
@@ -632,12 +632,12 @@ async function buildPresentation() {
     s.addShape(pres.shapes.RECTANGLE, {
       x: 0.45, y: 4.72, w: 2.6, h: 0.52,
       fill: { color: W.blue },
-      hyperlink: { url: "https://bindx-consulting.bindx-consulting.github.io/westernacher-ai-desk/westernacher_ai_desk.html" }
+      hyperlink: { url: "https://bindx-consulting.github.io/westernacher-ai-desk/westernacher_ai_desk.html" }
     });
     s.addText("▶   Launch AI Desk", {
       x: 0.45, y: 4.72, w: 2.6, h: 0.52,
       fontSize: 13, bold: true, color: W.black, align: "center", valign: "middle", fontFace: "Arial", margin: 0,
-      hyperlink: { url: "https://bindx-consulting.bindx-consulting.github.io/westernacher-ai-desk/westernacher_ai_desk.html" }
+      hyperlink: { url: "https://bindx-consulting.github.io/westernacher-ai-desk/westernacher_ai_desk.html" }
     });
     s.addText("Click to open in browser", {
       x: 3.18, y: 4.78, w: 2.5, h: 0.4,
