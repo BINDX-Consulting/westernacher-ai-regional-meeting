@@ -517,9 +517,7 @@ The messier the input, the more impressive the output."></textarea>
 
     <div class="run-section">
       <button class="run-btn" id="runBtn" onclick="runAnalysis()">
-        <svg id="runIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-        </svg>
+        <span id="runIconSlot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
         <span id="runLabel">Analyse Project Status</span>
       </button>
     </div>
@@ -695,13 +693,11 @@ async function runAnalysis() {
   const brief = document.getElementById('briefTxt').value.trim();
   if (!brief) { showToast('Paste some project input first'); return; }
 
-  const btn = document.getElementById('runBtn');
-  const icon = document.getElementById('runIcon');
-  const label = document.getElementById('runLabel');
-  btn.disabled = true;
-  icon.outerHTML = '<div class="btn-spinner" id="runIcon"></div>';
-  label.textContent = 'Analysing…';
+  const btn    = document.getElementById('runBtn');
+  const label  = document.getElementById('runLabel');
 
+  // Use CSS classes instead of outerHTML — safe on every re-run
+  setRunningState(btn, label, true);
   showLoading();
 
   try {
@@ -710,12 +706,32 @@ async function runAnalysis() {
     currentResult = await callClaude(brief, projType, audience);
     renderResult(currentResult);
   } catch(e) {
-    showError(e.message);
+    const msg = e.message || 'Unknown error';
+    // Distinguish network failure from API error
+    if (msg === 'Failed to fetch' || msg.includes('NetworkError') || msg.includes('network')) {
+      showError('Network error — check your connection and try again.');
+    } else if (msg.includes('API 4') || msg.includes('API 5')) {
+      showError('API error ' + msg.replace('API ','') + ' — please try again in a moment.');
+    } else {
+      showError(msg);
+    }
+  } finally {
+    // Always re-enable — even if something threw
+    setRunningState(btn, label, false);
   }
+}
 
-  btn.disabled = false;
-  document.getElementById('runIcon').outerHTML = `<svg id="runIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`;
-  document.getElementById('runLabel').textContent = 'Re-analyse';
+function setRunningState(btn, label, isRunning) {
+  btn.disabled = isRunning;
+  const iconSlot = document.getElementById('runIconSlot');
+  if (!iconSlot) return;
+  if (isRunning) {
+    iconSlot.innerHTML = '<div class="btn-spinner"></div>';
+    label.textContent  = 'Analysing…';
+  } else {
+    iconSlot.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
+    label.textContent  = currentResult ? 'Re-analyse' : 'Analyse Project Status';
+  }
 }
 
 // ── LOADING STATE ─────────────────────────────────────────────────

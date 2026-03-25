@@ -475,10 +475,20 @@ async function callClaude(msg){
 Answer questions using the knowledge base below. Be specific. Reference client names, real metrics, real quotes, and specific product names. Use **bold** for key terms.
 Format: concise paragraphs or short bullets. 3–8 sentences unless complexity demands more. Never invent facts not in the knowledge base.
 KNOWLEDGE BASE:\n${KB}`;
-  const messages=[...state.messages.map(m=>({role:m.role,content:m.content})),{role:'user',content:msg}];
-  const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:sys,messages})});
-  if(!resp.ok)throw new Error(`API ${resp.status}`);
-  const data=await resp.json();return data.content[0].text;
+  // Keep only last 6 messages to limit request body size
+  const history = state.messages.slice(-6).map(m=>({role:m.role,content:m.content}));
+  const messages=[...history,{role:'user',content:msg}];
+  const resp=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:sys,messages})
+  });
+  if(!resp.ok){
+    const errText = await resp.text().catch(()=>'');
+    throw new Error(`API ${resp.status}${errText? ': '+errText.slice(0,80): ''}`);
+  }
+  const data=await resp.json();
+  return data.content[0].text;
 }
 
 function renderMessage(role,content,sources=[]){
@@ -532,18 +542,47 @@ function updateContext(sources){
 
 async function sendMessage(text){
   const input=document.getElementById('msgInput');
-  const msg=(text||input.value).trim();if(!msg||state.loading)return;
-  input.value='';autoResize(input);state.loading=true;document.getElementById('sendBtn').disabled=true;
+  const msg=(text||input.value).trim();
+  if(!msg||state.loading)return;
+  input.value='';autoResize(input);
+  state.loading=true;
+  document.getElementById('sendBtn').disabled=true;
   renderMessage('user',msg);showTyping();
   try{
-    const reply=await callClaude(msg);removeTyping();
-    const sources=extractSources(reply);renderMessage('assistant',reply,sources);updateContext(sources);
+    let reply;
+    try {
+      reply = await callClaude(msg);
+    } catch(netErr) {
+      // One automatic retry on network failure
+      if(netErr.message==='Failed to fetch'||netErr.message.includes('network')||netErr.message.includes('Network')) {
+        await new Promise(r=>setTimeout(r,1200));
+        reply = await callClaude(msg);
+      } else {
+        throw netErr;
+      }
+    }
+    removeTyping();
+    const sources=extractSources(reply);
+    renderMessage('assistant',reply,sources);
+    updateContext(sources);
     state.messages.push({role:'user',content:msg},{role:'assistant',content:reply});
-    if(state.messages.length>20)state.messages=state.messages.slice(-20);
-    state.exchanges++;document.getElementById('statEx').textContent=state.exchanges;
+    if(state.messages.length>12)state.messages=state.messages.slice(-12);
+    state.exchanges++;
+    document.getElementById('statEx').textContent=state.exchanges;
     document.getElementById('msgCount').textContent=`${state.exchanges} exchange${state.exchanges!==1?'s':''}`;
-  }catch(err){removeTyping();renderMessage('assistant',`Connection issue — please try again. (${err.message})`);}
-  state.loading=false;document.getElementById('sendBtn').disabled=false;document.getElementById('msgInput').focus();
+  } catch(err) {
+    removeTyping();
+    const userMsg = err.message==='Failed to fetch'
+      ? 'Network error — check your connection and try again.'
+      : err.message.startsWith('API')
+        ? `API error ${err.message.replace('API ','')} — please try again.`
+        : `Error: ${err.message}`;
+    renderMessage('assistant', userMsg);
+  } finally {
+    state.loading=false;
+    document.getElementById('sendBtn').disabled=false;
+    document.getElementById('msgInput').focus();
+  }
 }
 
 function askQuestion(q){sendMessage(q);}
