@@ -464,7 +464,7 @@ const SOURCE_MAP = {
 };
 
 const state={messages:[],exchanges:0,loading:false};
-const API_KEY = '__ANTHROPIC_API_KEY__';
+
 
 function extractSources(text){
   const found=[];const upper=text.toUpperCase();
@@ -480,11 +480,11 @@ KNOWLEDGE BASE:\n${KB}`;
   // Keep only last 6 messages to limit request body size
   const history = state.messages.slice(-6).map(m=>({role:m.role,content:m.content}));
   const messages=[...history,{role:'user',content:msg}];
-  const resp=await fetch('https://api.anthropic.com/v1/messages',{
-    method:'POST',
-    headers:{
-      'Content-Type':'application/json',
-      'x-api-key': API_KEY,
+  const resp=await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': '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',
       'anthropic-version': '2023-06-01',
       'anthropic-dangerous-direct-browser-access': 'true'
     },
@@ -726,7 +726,12 @@ Content: ${responseText}`
 
   const resp = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': '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',
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
     body: JSON.stringify({
       model: 'claude-sonnet-4-20250514',
       max_tokens: 1000,
