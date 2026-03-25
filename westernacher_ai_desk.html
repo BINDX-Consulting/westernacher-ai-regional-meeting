@@ -480,14 +480,9 @@ KNOWLEDGE BASE:\n${KB}`;
   // Keep only last 6 messages to limit request body size
   const history = state.messages.slice(-6).map(m=>({role:m.role,content:m.content}));
   const messages=[...history,{role:'user',content:msg}];
-  const resp=await fetch('https://api.anthropic.com/v1/messages', {
+  const resp=await fetch('__PROXY_URL__', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': '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',
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true'
-    },
+    headers: { 'Content-Type': 'application/json' },
     body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:sys,messages})
   });
   if(!resp.ok){
@@ -724,14 +719,9 @@ Create 4-7 slides. Use a mix of types. Make it look like a real professional pre
 Content: ${responseText}`
   };
 
-  const resp = await fetch('https://api.anthropic.com/v1/messages', {
+  const resp = await fetch('__PROXY_URL__', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': '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',
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true'
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       model: 'claude-sonnet-4-20250514',
       max_tokens: 1000,

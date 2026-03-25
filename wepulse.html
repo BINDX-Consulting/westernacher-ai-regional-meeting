@@ -663,14 +663,9 @@ Analyse the project input and extract structured intelligence. Return ONLY valid
 Rules:
 Rules: health_score 0-100; GREEN≥75 AMBER 50-74 RED<50. dim color g≥70 a 45-69 r<45. 4-6 RAID items (R/A/I/D), severity H/M/L. 3-4 milestones (done/current/at-risk/upcoming). 4-5 actions. projType: ${projType||'auto-detect'}. Be specific with numbers from input. Keep descriptions short.`;
 
-  const resp = await fetch('https://api.anthropic.com/v1/messages', {
+  const resp = await fetch('__PROXY_URL__', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': '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',
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true'
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       model: 'claude-sonnet-4-20250514',
       max_tokens: 2500,
