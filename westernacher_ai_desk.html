@@ -95,7 +95,7 @@
   .stat-label{font-size:10px;color:#444;margin-top:2px;}
   .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);background:#1A1A1A;border:1px solid #2A2A2A;border-radius:8px;padding:9px 16px;font-size:12.5px;color:#ccc;opacity:0;transition:all 0.3s;pointer-events:none;z-index:100;}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-
+ 
   /* ── EXPORT TOOLBAR ── */
   .export-toolbar{display:flex;align-items:center;gap:6px;margin-top:8px;padding-top:8px;border-top:1px solid #1A1A1A;}
   .export-label{font-size:10px;color:#444;letter-spacing:0.5px;text-transform:uppercase;margin-right:2px;}
@@ -114,7 +114,7 @@
   .gen-spinner{width:40px;height:40px;border:3px solid #1A1A1A;border-top-color:var(--w-blue);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 1rem;}
   @keyframes spin{to{transform:rotate(360deg);}}
   .gen-modal .file-icon{font-size:32px;margin-bottom:0.8rem;}
-
+ 
 </style>
 </head>
 <body>
@@ -142,7 +142,7 @@
     <div class="kb-badge">westernacher.com · KB v2.0</div>
   </div>
 </header>
-
+ 
 <div class="layout">
   <div class="sidebar-left">
     <div class="sidebar-section">
@@ -185,7 +185,7 @@
       <div class="sq-item" onclick="askQuestion(this.textContent)">What is the AI Council and AI Value Sprint?</div>
     </div>
   </div>
-
+ 
   <div class="main">
     <div class="chat-area" id="chatArea">
       <div class="welcome" id="welcomeState">
@@ -214,7 +214,7 @@
       </div>
     </div>
   </div>
-
+ 
   <div class="sidebar-right">
     <div class="context-panel" id="contextPanel">
       <div class="sidebar-label">Sources Referenced</div>
@@ -229,25 +229,25 @@
   </div>
 </div>
 <div class="toast" id="toast"></div>
-
+ 
 <script>
 const KB = `=== WESTERNACHER CONSULTING — KNOWLEDGE BASE v2.0 ===
 Source: westernacher.com | SAP Gold Partner | Founded 1969 | Heidelberg HQ
-
+ 
 ━━━ COMPANY PROFILE ━━━
 Founded: 1969 in Karlsruhe; headquartered in Heidelberg, Germany. Tagline: "Nonstop Innovation."
 Size: ~1,200–1,300 consultants worldwide (2025). SAP Gold Partner since 1993 — 30+ years of strategic SAP partnership.
 Carbon neutral since 2021. Active in Europe, Asia, North America, South America. Main European focus: Germany, Switzerland, Austria.
 Key offices: Heidelberg (HQ), Bangalore, Dubai, Singapore, Sydney, Chicago, São Paulo, Warsaw, Taiwan, Mexico City.
 Industries: Manufacturing, Logistics, Retail & Consumer Goods, Life Sciences, Utilities, Automotive, Agribusiness, Mining, Chemical.
-
+ 
 ━━━ AWARDS & RECOGNITION ━━━
 - SAP Global Supply Chain Management Partner Excellence FINALIST 2025 — Indirect Sales & Customer Success. First award at UK&IR PKOM.
 - SAP Supply Chain Excellence Award 2025 — received at SAP Partner Kick-Off Meeting (PKOM).
 - SAP S/4HANA Operations Certification — benchmark in cloud-ready excellence.
 - Solutions available on SAP App Center/Store — SAP-certified partner packages.
 - Belenos Biosciences project shortlisted for SAP Innovation Awards 2026.
-
+ 
 ━━━ WORLD-FIRST & PIONEERING IMPLEMENTATIONS ━━━
 - World's first comprehensive SAP TM implementation with integrated e-commerce.
 - One of the first SAP TM implementations on HANA and as TM Cloud Edition.
@@ -261,12 +261,12 @@ Industries: Manufacturing, Logistics, Retail & Consumer Goods, Life Sciences, Ut
 - World's first SAP EWM-based robotic intelligence system (Hasco Vision China).
 - First to implement SAP TM embedded in SAP S/4HANA.
 - First SAP BW on HANA; first SAP-qualified partner packages for SAP Analytics Cloud.
-
+ 
 ━━━ SAP EWM (EXTENDED WAREHOUSE MANAGEMENT) ━━━
 25+ years of SAP EWM experience. One of the world's leading EWM implementation partners.
 Capabilities: Large/small warehouses, manual or automated; MFS integration; robotics (AMRs, robotic arms, AS-RS); omnichannel fulfilment; labour management; slotting; wave management; cross-docking; yard management; IoT-enabled forklift integration; Connected Kanban.
 Proprietary tools: "We Scan" UI5 mobile scanning app (reduces processing time by 40%); "We Pick" picking app; pre-configured EWM package delivering core functionality in 12 weeks; EWM Insights on SAP Datasphere (free on SAP App Center) — 40+ predefined KPIs for multi-warehouse monitoring.
-
+ 
 ━━━ SAP TM (TRANSPORTATION MANAGEMENT) ━━━
 Global leader in SAP TM. 25+ years experience. First to implement SAP TM embedded in S/4HANA.
 Capabilities: All transport modes (road, rail, ocean, air); freight cost management; automated invoice verification; carrier collaboration; tendering; event management; track & trace; EDI integration; telematics integration.
@@ -274,57 +274,57 @@ Proprietary tools:
 - Westernacher Collaboration Platform (WCP): SAP Fiori-based carrier/partner collaboration portal. Compatible with all SAP TM versions. Cloud-deployable. Real-time collaboration and reporting.
 - Westernacher Control Tower: Fiori-based exception management. Management-by-exception visibility across logistics operations. Analytical dashboards.
 - Westernacher Driver Application: Mobile app for drivers; real-time tour execution; ePOD; event reporting; barcode scanning; SAP TM integration.
-
+ 
 ━━━ SAP YARD LOGISTICS (YL) ━━━
 World's first SAP Yard Logistics implementation. Leading YL partner in automotive, retail, agriculture, oil & gas.
 Capabilities: Gate management, dock scheduling, trailer tracking, real-time yard visibility, asset utilisation. Proprietary: "We Yard" solution.
-
+ 
 ━━━ SAP GTS (GLOBAL TRADE SERVICES) ━━━
 Capabilities: Automated customs compliance, sanctioned party screening, embargo checks, license determination, FTA management, Intrastat reporting.
 Results: 95%+ automation of sanctioned party screening; 60–80% reduction in customs processing time; 30–50% duty savings; 70–80% reduction in manual processing. Implementation: 6–12 months. Cloud (GTS E4H) and on-premise options. Integrates with SAP S/4HANA, ECC, TM, EWM, and non-SAP ERPs.
-
+ 
 ━━━ SAP IBP (INTEGRATED BUSINESS PLANNING) ━━━
 Among the very first SAP IBP implementers (since 2014). Fast Solutions: Demand planning live in 9 weeks; S&OP live in 16 weeks.
 Capabilities: Demand planning, supply planning, S&OP, inventory optimisation, IBP Control Tower, demand sensing.
 Real-time dashboards: 40+ KPIs — inventory accuracy, order fill rates, labour productivity, space utilisation.
-
+ 
 ━━━ SAP SPP & eSPP (SERVICE PARTS PLANNING) ━━━
 World's first SAP SPP implementation. Since 2005, advising companies in spare parts logistics.
 Capabilities: Statistical forecasting for intermittent demand, multi-echelon optimisation, fair share distribution, service level simulation.
 Industries: Automotive aftermarket, industrial machinery, medical devices, aviation MRO.
-
+ 
 ━━━ SAP ANALYTICS CLOUD (SAC) & DATASPHERE ━━━
 First SAP-qualified partner packages for SAC. Capabilities: Business planning, supply chain planning, sustainability analytics, mobile BI apps.
 EWM Insights on Datasphere: Free on SAP App Center; 40+ predefined warehouse KPIs; multi-warehouse visibility.
-
+ 
 ━━━ SAP S/4HANA & ERP ━━━
 Services: Greenfield, brownfield, system conversion, RISE with SAP, GROW with SAP.
 Cloud ERP Assessment Starter Packages: 2–4 weeks using SAP Signavio + SNP. Identifies process improvements and custom code issues. Suitable for all company sizes.
 AMS (Application Management Services): SAP S/4HANA Operations Certified. Covers incident, request, and problem management with proactive monitoring. Continuous improvement. Follow-the-sun delivery. Framework: SAP Activate, Cloud ALM, Signavio, LeanIX.
-
+ 
 ━━━ SAP SIGNAVIO & LEANIX ━━━
 SAP Signavio: Process discovery, mining, modelling, workflow automation. Used in cloud ERP assessments and Activate-based delivery.
 SAP LeanIX: Enterprise architecture management — IT governance, compliance, S/4HANA transition roadmaps.
-
+ 
 ━━━ SAP BTP (BUSINESS TECHNOLOGY PLATFORM) ━━━
 Services: Integration Suite (CPI), Extension Suite, AI Core, SAP Generative AI Hub.
 Used for clean-core side-by-side extensions and AI integration. SAP announced MCP hosting in Integration Suite (Q2 2026) for Claude, Cursor, Windsurf.
-
+ 
 ━━━ AI & INNOVATION STRATEGY ━━━
 SAP JOULE FOR CONSULTANTS:
 Westernacher was an early adopter of SAP Joule for Consultants.
 Impact: Consultants reduce time interpreting code by up to 40%. Faster transformation roadmaps, system documentation, and impact assessments. Enhanced onboarding.
 Quote — Neil Wightman, COO SEA: "Westernacher empowers our teams to reduce time spent on research, navigate complex system landscapes more efficiently, and deliver solutions faster."
-
+ 
 AI COUNCIL (India · Middle East · APAC):
 Mission: Deliver measurable profitability and operational improvements using AI aligned to Westernacher's SAP + Supply Chain + Process Transformation strengths.
 Operating model: "Two Factories, One Council" — AI Revenue Factory + AI Delivery Factory.
 AI Allies Network: Cross-org community for AI knowledge sharing.
 AI Value Sprint: 2-week fixed-fee prototype engagement → paid pilot conversion.
 AI Agent Catalog: Supply Chain Exception Agent, Planning Insight Agent (IBP-style), Process Intelligence Agent (Signavio-style), HR Service Agent (SuccessFactors-style), Incident Triage Agent, Consulting Productivity Agent.
-
+ 
 ━━━ CLIENT REFERENCES ━━━
-
+ 
 [BELENOS BIOSCIENCES] Industry: Biotech / Life Sciences | Region: New York, USA
 Context: Biotech startup (2024), raised ~$55M seed funding; needed SAP for IPO readiness.
 Challenge: Manual spreadsheet processes; urgent tax filing; investor-grade financials required.
@@ -332,76 +332,76 @@ Solution: SAP S/4HANA Cloud Public Edition (finance + procurement) + SAP Concur.
 Results: GAAP-aligned financials; manual reconciliations reduced by up to 70%; >95% R&D cost tracking accuracy.
 Quotes: CFO Tania Dimitrova: "I've never heard of another company of our size filing first tax returns with a system like SAP." Controller Sam Amoresano: "Now I'm able to produce a trial balance and financials for our investors."
 Recognition: Shortlisted for SAP Innovation Awards 2026.
-
+ 
 [BAYWA AG] Industry: Agriculture / Construction / Energy | Region: Germany (global, 40+ countries)
 Context: International group; Project LEO (Logistics Excellence Offensive) — standardise transport.
 Challenge: Legacy custom-built transport system; siloed operations.
 Solution: Global SAP TM implementation; Trimble Telematics integration; SAP EM, Control Tower, EDI. Team of 10+ consultants from 7 countries.
 Results: Standardised transport processes across divisions; real-time track & trace; freight cost control; on-time delivery improvements. Own fleet management.
-
+ 
 [SQM — SOCIEDAD QUÍMICA Y MINERA] Industry: Mining / Lithium | Region: Chile
 Context: One of the world's largest lithium producers; growing global demand for lithium.
 Challenge: Manual warehouse processes; needed fully SAP-controlled operations.
 Solution: SAP EWM + PP + QM. Automated storage, location tracking, container loading, inventory management.
 Results: Full warehouse visibility; zero Handling Unit (HU) storage errors; faster data access; reduced container preparation time. Operators guided by handheld devices.
 Quote — Fernando Frederick, SAP PM at SQM: "SQM attributes project success to Westernacher's expertise in managing technical and organizational challenges."
-
+ 
 [ELKJØP] Industry: Retail (Consumer Electronics) | Region: Nordics (Denmark, Norway, Sweden, Finland)
 Context: Nordic retail giant (400+ stores); needed next-gen last-mile delivery during COVID-19.
 Solution: SAP TM + EWM + 3 mobile apps + EDI + SAP Carrier Collaboration Portal. Rolled out to 36 stores in Denmark during COVID, then ~400 stores across Scandinavia.
 Results: Best-in-class last-mile delivery; fully automatic home delivery planning; full visibility for employees and customers.
-
+ 
 [CALIFORNIA STEEL INDUSTRIES (CSI)] Industry: Steel Manufacturing | Region: Fontana, California, USA
 Context: Leading West Coast steel manufacturer; 2M+ tonnes capacity; 5 product lines.
 Challenge: Manual load consolidation and rail car assignment; no freight automation.
 Solution: SAP TM implementation (January 2019 go-live); automated truck and rail car load planning; freight payment, tendering, rail car assignment.
 Results: 98% automation of invoice verification (unprecedented for US customers at the time); fully automated rail planning; no new headcount. Described by CSI as "an amazing success."
-
+ 
 [AL DAHRA HOLDING] Industry: Agribusiness | Region: Abu Dhabi, UAE (45+ markets)
 Context: Multinational agribusiness leader; 5,000 employees; 20+ countries.
 Challenge: Siloed supply chain; excessive manual freight booking causing errors and delays.
 Solution: First-ever SAP Business Network for Logistics implementation in the Middle East. SAP TM + SAP Business Network Freight Collaboration. Connected 13 land carriers across 8 countries. Integrated Descartes (ocean), Agility 3PL.
 Results: Eliminated Excel/email carrier coordination; automated freight booking and status updates; real-time carrier visibility; seamless dispute handling.
-
+ 
 [UNITED SUGARS CORPORATION (USC)] Industry: Sugar / Food & Beverage | Region: Minnesota, USA
 Context: Leading US sugar marketer; ~28% US market share.
 Challenge: Third-party carrier settlement to be brought in-house; manual rail and truck planning.
 Solution: SAP TM Phase 1 (rail automation + financial settlement) + Phase 2 (truck automation). Tight SAP ERP FI integration.
 Results: 98% automation of invoice verification — unprecedented for US customers. Fully automated rail planning. No new headcount. Eliminated third-party settlement costs.
-
+ 
 [PPG AC FRANCE] Industry: Coatings | Region: France
 Solution: World's first SAP S/4 Decentralized EWM implementation (at one of PPG's largest European DCs).
-
+ 
 [HASCO VISION CO.] Industry: Automotive Supplier | Region: China
 Solution: World's first SAP EWM-based robotic intelligence system in their warehouse.
-
+ 
 [INEOS STYROLUTION] Industry: Styrenics / Chemicals | Region: Global
 Solution: SAP IBP for global supply planning. Better equipped to meet global demand.
-
+ 
 [BACHEM] Industry: Life Sciences | Region: Switzerland
 Solution: Synchronized planning — SAP IBP + SAP ePP/DS. Successful go-live.
-
+ 
 [3M] Industry: Diversified Manufacturing | Region: Global
 Solution: Global warehouse template rollout with SAP EWM.
-
+ 
 [FORD] Industry: Automotive | Region: Global
 Solution: Complete SAP SPM (Service Parts Management) solution.
-
+ 
 [ZENTIS] Industry: Food & Beverage | Region: Germany
 Solution: World's first Connected Silo (SAP IoT solution for silo management).
-
+ 
 [WUMART] Industry: Retail / Grocery | Region: China
 Solution: SAP TM + EWM distribution management for 1,000+ hypermarkets and stores.
-
+ 
 [EWE] Industry: Energy / Utilities | Region: Germany
 Solution: Modernised reporting with SAP Datasphere and SAP Analytics Cloud.
-
+ 
 [CARLSBERG BRITVIC] Industry: Beverages | Region: UK/Ireland
 Solution: Digital transformation in warehouse operations with SAP EWM.
-
+ 
 [JOHN KEELLS] Industry: Diversified Conglomerate | Region: Sri Lanka
 Solution: Future-proof warehouse management with SAP EWM.
-
+ 
 ━━━ PROPRIETARY TOOLS (Instant Innovation Tools) ━━━
 1. Westernacher Collaboration Platform (WCP): SAP Fiori carrier/partner portal; all TM versions; cloud-ready.
 2. Westernacher Control Tower: Fiori exception management and analytics for TM operations.
@@ -414,7 +414,7 @@ Solution: Future-proof warehouse management with SAP EWM.
 9. Connected Forklift: IoT forklift integration for real-time tracking.
 10. Connected Kanban: Real-time material replenishment via Neoception + SAP EWM.
 11. Cloud ERP Assessment Starter Packages: 2–4 weeks; Signavio + SNP; for all company sizes.
-
+ 
 ━━━ KEY DIFFERENTIATORS ━━━
 1. Pioneer: Consistently first to implement new SAP technologies globally.
 2. Deep specialisation: 55+ years focused exclusively on SAP.
@@ -424,7 +424,7 @@ Solution: Future-proof warehouse management with SAP EWM.
 6. AI-native: SAP Joule adoption; AI Council; AI embedded in methodology.
 7. Carbon neutral since 2021.
 8. SAP reseller: Complete SAP solutions from one trusted partner.`;
-
+ 
 const SOURCE_MAP = {
   'BELENOS':{'title':'Belenos Bioscience — S/4HANA Cloud','color':'#CECAE5'},
   'BAYWA':{'title':'BayWa AG — SAP TM','color':'#93CCEA'},
@@ -462,16 +462,16 @@ const SOURCE_MAP = {
   'DATASPHERE':{'title':'SAP Datasphere / SAC','color':'#F59E0B'},
   'SPP':{'title':'SAP SPP Service Parts','color':'#CECAE5'},
 };
-
+ 
 const state={messages:[],exchanges:0,loading:false};
-
-
+ 
+ 
 function extractSources(text){
   const found=[];const upper=text.toUpperCase();
   for(const[key,val]of Object.entries(SOURCE_MAP)){if(upper.includes(key.toUpperCase()))found.push(val);}
   return[...new Map(found.map(s=>[s.title,s])).values()].slice(0,6);
 }
-
+ 
 async function callClaude(msg){
   const sys=`You are the Westernacher AI Desk — an intelligent internal knowledge assistant for Westernacher Consulting, a global SAP Gold Partner consulting firm founded in 1969.
 Answer questions using the knowledge base below. Be specific. Reference client names, real metrics, real quotes, and specific product names. Use **bold** for key terms.
@@ -492,7 +492,7 @@ KNOWLEDGE BASE:\n${KB}`;
   const data=await resp.json();
   return data.content[0].text;
 }
-
+ 
 function renderMessage(role,content,sources=[]){
   const w=document.getElementById('welcomeState');if(w)w.remove();
   const ca=document.getElementById('chatArea');
@@ -523,7 +523,7 @@ function renderMessage(role,content,sources=[]){
   }
   div.appendChild(lbl);div.appendChild(bub);ca.appendChild(div);ca.scrollTop=ca.scrollHeight;
 }
-
+ 
 function showTyping(){
   const ca=document.getElementById('chatArea');
   const div=document.createElement('div');div.className='message assistant';div.id='typingMsg';
@@ -532,7 +532,7 @@ function showTyping(){
   div.appendChild(lbl);div.appendChild(t);ca.appendChild(div);ca.scrollTop=ca.scrollHeight;
 }
 function removeTyping(){const t=document.getElementById('typingMsg');if(t)t.remove();}
-
+ 
 function updateContext(sources){
   const panel=document.getElementById('contextPanel');
   panel.querySelectorAll('.cited-source').forEach(el=>el.remove());
@@ -541,7 +541,7 @@ function updateContext(sources){
   if(empty)empty.style.display='none';
   sources.forEach(s=>{const div=document.createElement('div');div.className='cited-source';div.innerHTML=`<div class="cited-source-title" style="color:${s.color}">${s.title}</div><div class="cited-source-text">Referenced from Westernacher knowledge base.</div>`;panel.appendChild(div);});
 }
-
+ 
 async function sendMessage(text){
   const input=document.getElementById('msgInput');
   const msg=(text||input.value).trim();
@@ -586,8 +586,8 @@ async function sendMessage(text){
     document.getElementById('msgInput').focus();
   }
 }
-
-
+ 
+ 
   if (!key.startsWith('sk-ant-')) { err.textContent = 'Key should start with sk-ant- — check and try again.'; return; }
   API_KEY = key;
   document.getElementById('msgInput').focus();
@@ -598,17 +598,17 @@ function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrol
 function filterDomain(el){document.querySelectorAll('.kb-domain').forEach(x=>x.classList.remove('active'));el.classList.add('active');showToast('Domain: '+el.textContent.trim());}
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);}
 document.getElementById('msgInput').focus();
-
-
+ 
+ 
 // ── FILE GENERATION FUNCTIONS ────────────────────────────────────
-
+ 
 function getLastAssistantText(btn) {
   // Find the message bubble this button belongs to
   const bubble = btn.closest('.msg-bubble');
   const paras = bubble.querySelectorAll('p, li');
   return Array.from(paras).map(p => p.textContent).join('\n').trim();
 }
-
+ 
 async function exportFile(type, btn) {
   const responseText = getLastAssistantText(btn);
   
@@ -629,7 +629,7 @@ async function exportFile(type, btn) {
   hideGenModal();
   toolbar.querySelectorAll('.export-btn').forEach(b => b.classList.remove('generating'));
 }
-
+ 
 // ── MODAL ────────────────────────────────────────────────────────
 function showGenModal(type) {
   const icons = { excel: '📊', word: '📄', pptx: '📑' };
@@ -649,7 +649,7 @@ function showGenModal(type) {
 function hideGenModal() {
   const m = document.getElementById('genModal'); if (m) m.remove();
 }
-
+ 
 // ── CLAUDE STRUCTURED CONTENT ────────────────────────────────────
 async function getStructuredContent(responseText, format) {
   const prompts = {
@@ -667,7 +667,7 @@ Return ONLY valid JSON with this exact structure, no markdown, no explanation:
 }
 Use multiple sheets if the content has distinct sections. Extract all structured data, metrics, lists, comparisons.
 Content: ${responseText}`,
-
+ 
     word: `Convert the following response into a structured Word document JSON format.
 Return ONLY valid JSON with this exact structure, no markdown, no explanation:
 {
@@ -683,7 +683,7 @@ Return ONLY valid JSON with this exact structure, no markdown, no explanation:
   "footer": "Westernacher Consulting | Confidential"
 }
 Content: ${responseText}`,
-
+ 
     pptx: `Convert the following response into a PowerPoint presentation JSON format.
 Return ONLY valid JSON with this exact structure, no markdown, no explanation:
 {
@@ -718,7 +718,7 @@ Return ONLY valid JSON with this exact structure, no markdown, no explanation:
 Create 4-7 slides. Use a mix of types. Make it look like a real professional presentation.
 Content: ${responseText}`
   };
-
+ 
   const resp = await fetch('https://we-ai-regional-summit.emirduvif.workers.dev/', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -732,13 +732,13 @@ Content: ${responseText}`
   const raw = data.content[0].text.replace(/```json|```/g, '').trim();
   return JSON.parse(raw);
 }
-
+ 
 // ── EXCEL GENERATION ─────────────────────────────────────────────
 async function generateExcel(responseText) {
   const d = await getStructuredContent(responseText, 'excel');
   const wb = XLSX.utils.book_new();
   wb.Props = { Title: d.title, Author: 'Westernacher AI Desk' };
-
+ 
   d.sheets.forEach(sheet => {
     const wsData = [sheet.headers, ...sheet.rows];
     const ws = XLSX.utils.aoa_to_sheet(wsData);
@@ -749,20 +749,20 @@ async function generateExcel(responseText) {
       const maxLen = Math.max(h.length, ...sheet.rows.map(r => (r[i]||'').toString().length));
       return { wch: Math.min(maxLen + 4, 40) };
     });
-
+ 
     // Header style - just bold (xlsx doesn't support full styling without pro)
     sheet.headers.forEach((_, i) => {
       const cell = XLSX.utils.encode_cell({ r: 0, c: i });
       if (ws[cell]) ws[cell].s = { font: { bold: true } };
     });
-
+ 
     XLSX.utils.book_append_sheet(wb, ws, sheet.name.slice(0, 31));
   });
-
+ 
   XLSX.writeFile(wb, `Westernacher_${d.title.replace(/\s+/g,'_').slice(0,40)}.xlsx`);
   showToast('Excel file downloaded ✓');
 }
-
+ 
 // ── WORD GENERATION ──────────────────────────────────────────────
 async function generateWord(responseText) {
   const d = await getStructuredContent(responseText, 'word');
@@ -783,7 +783,7 @@ async function generateWord(responseText) {
 <div class="brand-bar">WESTERNACHER CONSULTING &nbsp;·&nbsp; AI DESK EXPORT</div>
 <h1>${d.title}</h1>
 ${d.subtitle ? `<div class="subtitle">${d.subtitle}</div>` : ''}`;
-
+ 
   d.sections.forEach(sec => {
     html += `<h2>${sec.heading}</h2>`;
     if (sec.content) html += `<p>${sec.content}</p>`;
@@ -793,28 +793,28 @@ ${d.subtitle ? `<div class="subtitle">${d.subtitle}</div>` : ''}`;
       html += '</ul>';
     }
   });
-
+ 
   html += `<div class="footer">${d.footer || 'Westernacher Consulting | AI Desk | Confidential'}</div>
-
-
+ 
+ 
 </body></html>`;
-
+ 
   const blob = new Blob([html], { type: 'application/msword;charset=utf-8' });
   saveAs(blob, `Westernacher_${d.title.replace(/\s+/g,'_').slice(0,40)}.doc`);
   showToast('Word document downloaded ✓');
 }
-
+ 
 // ── PPTX GENERATION ──────────────────────────────────────────────
 async function generatePPTX(responseText) {
   const d = await getStructuredContent(responseText, 'pptx');
-
+ 
   const pres = new PptxGenJS();
   pres.layout = 'LAYOUT_16x9';
   pres.title = d.title;
-
+ 
   // Brand colors
   const BLACK = '0A0A0A', WHITE = 'FFFFFF', BLUE = '93CCEA', LILAC = 'CECAE5', DARK = '141414';
-
+ 
   // Westernacher logo path data (simplified text treatment for PPTX)
   const addLogo = (slide, dark=false) => {
     slide.addText('Westernacher', {
@@ -826,15 +826,15 @@ async function generatePPTX(responseText) {
       line:{ color: BLUE, width:1.5 }
     });
   };
-
+ 
   d.slides.forEach((slide, idx) => {
     const s = pres.addSlide();
-
+ 
     if (slide.type === 'title' || idx === 0) {
       // Title slide — dark background
       s.background = { color: BLACK };
       addLogo(s, true);
-
+ 
       // Big title
       s.addText(slide.title, {
         x:0.5, y:1.2, w:9, h:1.8,
@@ -848,13 +848,13 @@ async function generatePPTX(responseText) {
       // Footer line
       s.addShape(pres.shapes.LINE, { x:0, y:5.38, w:10, h:0, line:{ color:BLUE, width:2 } });
       s.addText('Westernacher Consulting', { x:0, y:5.2, w:10, h:0.3, fontSize:10, color:'555555', align:'center', fontFace:'Calibri' });
-
+ 
     } else if (slide.type === 'stats') {
       s.background = { color: BLACK };
       addLogo(s, true);
       s.addShape(pres.shapes.LINE, { x:0.35, y:0.62, w:0.8, h:0, line:{ color:BLUE, width:1.5 } });
       s.addText(slide.title, { x:0.35, y:0.75, w:9.3, h:0.65, fontSize:26, bold:true, color:WHITE, fontFace:'Calibri' });
-
+ 
       const stats = slide.stats || [];
       const cols = Math.min(stats.length, 4);
       const w = 9.3 / cols;
@@ -865,13 +865,13 @@ async function generatePPTX(responseText) {
         s.addText(stat.value, { x:x+0.15, y:2.0, w:w-0.4, h:1.2, fontSize:38, bold:true, color:WHITE, fontFace:'Calibri' });
         s.addText(stat.label, { x:x+0.15, y:3.2, w:w-0.4, h:0.8, fontSize:12, color:'888888', fontFace:'Calibri' });
       });
-
+ 
     } else if (slide.type === 'two-col') {
       s.background = { color: WHITE };
       addLogo(s, false);
       s.addShape(pres.shapes.LINE, { x:0.35, y:0.62, w:0.8, h:0, line:{ color:BLUE, width:1.5 } });
       s.addText(slide.title, { x:0.35, y:0.75, w:9.3, h:0.65, fontSize:26, bold:true, color:BLACK, fontFace:'Calibri' });
-
+ 
       ['left','right'].forEach((side, i) => {
         const x = 0.35 + i * 4.8;
         const heading = slide[`${side}_heading`] || '';
@@ -885,14 +885,14 @@ async function generatePPTX(responseText) {
           });
         });
       });
-
+ 
     } else {
       // Default content slide
       s.background = { color: WHITE };
       addLogo(s, false);
       s.addShape(pres.shapes.LINE, { x:0.35, y:0.62, w:0.8, h:0, line:{ color:BLUE, width:1.5 } });
       s.addText(slide.title, { x:0.35, y:0.75, w:9.3, h:0.65, fontSize:26, bold:true, color:BLACK, fontFace:'Calibri' });
-
+ 
       const bullets = slide.bullets || [];
       bullets.forEach((b, i) => {
         const isFirst = i === 0;
@@ -905,12 +905,12 @@ async function generatePPTX(responseText) {
       });
     }
   });
-
+ 
   pres.writeFile({ fileName: `Westernacher_${d.title.replace(/\s+/g,'_').slice(0,40)}.pptx` });
   showToast('PowerPoint file downloaded ✓');
 }
 </script>
-
-
+ 
+ 
 </body>
 </html>
