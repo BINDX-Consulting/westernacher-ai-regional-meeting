@@ -9,7 +9,7 @@
   .wai-reset,html body.wai-page{margin:0;padding:0;box-sizing:border-box;}
   html.wai-page,body.wai-page{height:100%;overflow:hidden;}
   body.wai-page{font-family:Arial,'Helvetica Neue',sans-serif;background:var(--wai-black);color:var(--wai-white);}
-  .wai-header{position:fixed;top:0;left:0;right:0;height:56px;background:#0A0A0A !important;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;background:rgba(10,10,10,0.96);border-bottom:1px solid var(--wai-border);z-index:100;}
+  .wai-header{position:fixed;top:0;left:0;right:0;height:56px;background:#0A0A0A;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;border-bottom:1px solid var(--wai-border);z-index:100;}
   .wai-header-left{display:flex;align-items:center;gap:14px;}
   .wai-header-divider{width:1px;height:18px;background:#333;}
   .wai-product-tag{font-size:13px;color:var(--wai-blue);letter-spacing:0.5px;}
@@ -138,9 +138,9 @@
 </head>
 <body class="wai-page">
 
-<header class="wai-header">
+<header class="wai-header" style="background:#0A0A0A;">
   <div class="wai-header-left">
-    <svg width="130" height="13" viewBox="0 0 1000 103.74" fill="white">
+    <svg width="130" height="13" viewBox="0 0 1000 103.74" fill="#FFFFFF" style="display:block;background:#0A0A0A;border-radius:2px;">
       <path d="M34.07,101.77L0,0h22.54l20.72,68.45L66.64,0H79.7l23.8,68.45L123.95,0h22.54l-33.95,101.77H95.14L73.31,35.13l-21.83,66.64H34.07z"/>
       <path d="M217.12,71.06h-56.92c2.76,10.62,10.15,15.99,22.11,15.99c8.21,0,17.96-3.16,24.47-7.58l7.78,13.62c-9.59,6.87-20.61,10.34-33.12,10.34c-13.34,0-23.53-3.87-30.59-11.45c-7.11-7.58-10.58-16.94-10.58-27.83c0-11.45,3.63-20.8,10.97-28.23c7.38-7.42,16.82-11.17,28.5-11.17c10.97,0,20.17,3.43,27.28,10.18s10.7,15.83,10.7,27.55C217.79,65.13,217.51,68.02,217.12,71.06z M160.19,56.61h38.53c-1.82-9.79-8.92-15.71-18.91-15.71C169.94,40.9,162.56,46.82,160.19,56.61z"/>
       <path d="M273.57,60.6c-2.09-1.11-8.21-3.59-18.24-7.3c-4.46-1.5-6.67-3.71-6.67-6.87c0-3.43,3.47-6.32,8.61-6.32c6.24,0,12.08,2.49,17.37,7.42l8.29-13.93c-6.71-6.2-15.12-9.32-25.11-9.32c-8.49,0-15.44,2.05-20.61,6.32c-5.13,4.26-7.78,9.63-7.78,16.26c0,8.8,4.3,15.28,13.07,19.42c1.66,0.83,4.86,2.21,9.75,3.99c4.86,1.78,7.78,2.88,9.04,3.43c3.63,1.66,5.41,3.87,5.41,6.47c0,4.26-4.46,7.3-10.42,7.3c-7.66,0-16.5-2.33-21.95-8.76l-8.57,14.41c7.46,8.17,18.2,10.62,30.4,10.62c9.04,0,16.42-2.21,21.83-6.75c5.57-4.54,8.33-10.34,8.33-17.37C286.4,71.33,282.05,65.02,273.57,60.6z"/>
