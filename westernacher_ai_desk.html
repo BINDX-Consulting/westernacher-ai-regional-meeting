@@ -114,6 +114,7 @@
   .gen-spinner{width:40px;height:40px;border:3px solid #1A1A1A;border-top-color:var(--w-blue);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 1rem;}
   @keyframes spin{to{transform:rotate(360deg);}}
   .gen-modal .file-icon{font-size:32px;margin-bottom:0.8rem;}
+
 </style>
 </head>
 <body>
@@ -463,6 +464,7 @@ const SOURCE_MAP = {
 };
 
 const state={messages:[],exchanges:0,loading:false};
+const API_KEY = '__ANTHROPIC_API_KEY__';
 
 function extractSources(text){
   const found=[];const upper=text.toUpperCase();
@@ -480,7 +482,12 @@ KNOWLEDGE BASE:\n${KB}`;
   const messages=[...history,{role:'user',content:msg}];
   const resp=await fetch('https://api.anthropic.com/v1/messages',{
     method:'POST',
-    headers:{'Content-Type':'application/json'},
+    headers:{
+      'Content-Type':'application/json',
+      'x-api-key': API_KEY,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
     body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:sys,messages})
   });
   if(!resp.ok){
@@ -585,6 +592,11 @@ async function sendMessage(text){
   }
 }
 
+
+  if (!key.startsWith('sk-ant-')) { err.textContent = 'Key should start with sk-ant- — check and try again.'; return; }
+  API_KEY = key;
+  document.getElementById('msgInput').focus();
+}
 function askQuestion(q){sendMessage(q);}
 function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}}
 function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,120)+'px';}
@@ -788,6 +800,8 @@ ${d.subtitle ? `<div class="subtitle">${d.subtitle}</div>` : ''}`;
   });
 
   html += `<div class="footer">${d.footer || 'Westernacher Consulting | AI Desk | Confidential'}</div>
+
+
 </body></html>`;
 
   const blob = new Blob([html], { type: 'application/msword;charset=utf-8' });
@@ -901,5 +915,7 @@ async function generatePPTX(responseText) {
   showToast('PowerPoint file downloaded ✓');
 }
 </script>
+
+
 </body>
 </html>
