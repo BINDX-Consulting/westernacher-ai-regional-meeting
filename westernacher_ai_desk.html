@@ -3,124 +3,443 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Westernacher AI Desk</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pptxgenjs/3.12.0/pptxgen.bundled.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-<style>
-  :root { --w-black:#0A0A0A;--w-white:#FFFFFF;--w-blue:#93CCEA;--w-lilac:#CECAE5;--w-bronze:#8B734D;--font:'DM Sans',sans-serif;--mono:'DM Mono',monospace; }
-  *{margin:0;padding:0;box-sizing:border-box;}
-  body{font-family:var(--font);background:var(--w-black);color:var(--w-white);height:100vh;display:flex;flex-direction:column;overflow:hidden;}
-  header{display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:56px;border-bottom:1px solid #1E1E1E;background:var(--w-black);flex-shrink:0;}
-  .logo-wrap{display:flex;align-items:center;gap:14px;}
-  .logo-divider{width:1px;height:18px;background:#333;}
-  .product-name{font-size:13px;color:var(--w-blue);letter-spacing:0.5px;}
-  .header-right{display:flex;align-items:center;gap:12px;}
-  .status-dot{display:flex;align-items:center;gap:6px;font-size:12px;color:#5A5A5A;}
-  .dot{width:7px;height:7px;border-radius:50%;background:#4ADE80;animation:pulse 2s infinite;}
-  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
-  .kb-badge{font-size:11px;padding:3px 10px;background:#1A1A1A;border:1px solid #2A2A2A;border-radius:20px;color:#888;font-family:var(--mono);}
-  .layout{display:grid;grid-template-columns:270px 1fr 270px;flex:1;overflow:hidden;}
-  .sidebar-left{border-right:1px solid #1A1A1A;display:flex;flex-direction:column;overflow:hidden;background:#0D0D0D;}
-  .sidebar-section{padding:1.1rem 1.3rem;border-bottom:1px solid #1A1A1A;}
-  .sidebar-label{font-size:10px;font-weight:600;letter-spacing:1.5px;color:#444;text-transform:uppercase;margin-bottom:0.8rem;}
-  .kb-domains{display:flex;flex-direction:column;gap:3px;}
-  .kb-domain{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;font-size:12px;color:#888;cursor:pointer;transition:all 0.15s;}
-  .kb-domain:hover{background:#1A1A1A;color:#ccc;}
-  .kb-domain.active{background:rgba(147,204,234,0.08);color:var(--w-blue);}
-  .kb-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
-  .suggested-qs{display:flex;flex-direction:column;gap:5px;flex:1;overflow-y:auto;padding:1rem 1.3rem;}
-  .suggested-qs::-webkit-scrollbar{width:4px;}
-  .suggested-qs::-webkit-scrollbar-thumb{background:#222;border-radius:2px;}
-  .sq-item{padding:8px 10px;background:#131313;border:1px solid #1E1E1E;border-radius:7px;font-size:11.5px;color:#888;cursor:pointer;transition:all 0.15s;line-height:1.4;}
-  .sq-item:hover{background:#1A1A1A;border-color:#2A2A2A;color:#ccc;}
-  .sq-category{font-size:10px;font-weight:600;letter-spacing:1px;color:#333;text-transform:uppercase;margin-top:0.7rem;margin-bottom:0.2rem;padding:0 2px;}
-  .main{display:flex;flex-direction:column;overflow:hidden;background:#080808;}
-  .chat-area{flex:1;overflow-y:auto;padding:2rem 2.5rem;display:flex;flex-direction:column;gap:1.8rem;}
-  .chat-area::-webkit-scrollbar{width:4px;}
-  .chat-area::-webkit-scrollbar-thumb{background:#222;border-radius:2px;}
-  .welcome{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;text-align:center;gap:1.1rem;padding:3rem;animation:fadeIn 0.5s ease;}
-  .welcome-icon{width:52px;height:52px;background:rgba(147,204,234,0.1);border:1px solid rgba(147,204,234,0.2);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;}
-  .welcome h2{font-size:21px;font-weight:500;color:var(--w-white);letter-spacing:-0.3px;}
-  .welcome p{font-size:13.5px;color:#666;max-width:420px;line-height:1.6;}
-  .welcome-chips{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-top:0.4rem;}
-  .chip{padding:7px 13px;background:#141414;border:1px solid #222;border-radius:20px;font-size:12px;color:#888;cursor:pointer;transition:all 0.15s;}
-  .chip:hover{background:rgba(147,204,234,0.08);border-color:rgba(147,204,234,0.3);color:var(--w-blue);}
-  .message{display:flex;flex-direction:column;gap:0.45rem;animation:slideUp 0.3s ease;}
-  @keyframes slideUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
-  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
-  .message.user{align-items:flex-end;}
-  .message.assistant{align-items:flex-start;}
-  .msg-role{font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;}
-  .message.user .msg-role{color:#555;}
-  .message.assistant .msg-role{color:var(--w-blue);opacity:0.7;}
-  .msg-bubble{max-width:82%;padding:12px 15px;border-radius:12px;font-size:13.5px;line-height:1.65;}
-  .message.user .msg-bubble{background:#161616;border:1px solid #222;color:#E0E0E0;border-radius:12px 12px 3px 12px;}
-  .message.assistant .msg-bubble{background:#111;border:1px solid #1E1E1E;color:#D8D8D8;border-radius:12px 12px 12px 3px;width:100%;max-width:100%;}
-  .msg-bubble strong{color:var(--w-white);font-weight:600;}
-  .msg-bubble p{margin-bottom:0.65rem;}
-  .msg-bubble p:last-child{margin-bottom:0;}
-  .msg-bubble ul{padding-left:1.2rem;margin:0.4rem 0;}
-  .msg-bubble li{margin-bottom:0.25rem;color:#BBB;}
-  .sources-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px;padding-top:9px;border-top:1px solid #1A1A1A;}
-  .source-tag{display:flex;align-items:center;gap:5px;padding:3px 8px;background:rgba(147,204,234,0.06);border:1px solid rgba(147,204,234,0.15);border-radius:4px;font-size:10px;color:var(--w-blue);font-family:var(--mono);}
-  .typing{display:flex;align-items:center;gap:5px;padding:12px 15px;background:#111;border:1px solid #1E1E1E;border-radius:12px 12px 12px 3px;width:fit-content;}
-  .typing span{width:6px;height:6px;background:var(--w-blue);border-radius:50%;animation:bounce 1.2s infinite;opacity:0.5;}
-  .typing span:nth-child(2){animation-delay:0.2s;}
-  .typing span:nth-child(3){animation-delay:0.4s;}
-  @keyframes bounce{0%,80%,100%{transform:translateY(0);opacity:0.3;}40%{transform:translateY(-5px);opacity:1;}}
-  .input-area{padding:1rem 2.5rem 1.4rem;border-top:1px solid #141414;background:#080808;}
-  .input-wrap{display:flex;gap:10px;align-items:flex-end;background:#111;border:1px solid #222;border-radius:12px;padding:9px 11px;transition:border-color 0.2s;}
-  .input-wrap:focus-within{border-color:rgba(147,204,234,0.3);}
-  textarea{flex:1;background:transparent;border:none;outline:none;resize:none;font-family:var(--font);font-size:13.5px;color:var(--w-white);line-height:1.5;max-height:120px;min-height:22px;}
-  textarea::placeholder{color:#444;}
-  .send-btn{width:33px;height:33px;background:var(--w-blue);border:none;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.15s;}
-  .send-btn:hover{background:#7ABDE0;}
-  .send-btn:disabled{background:#222;cursor:not-allowed;}
-  .send-btn svg{width:15px;height:15px;}
-  .input-meta{display:flex;justify-content:space-between;margin-top:5px;font-size:11px;color:#333;padding:0 2px;}
-  .sidebar-right{border-left:1px solid #1A1A1A;display:flex;flex-direction:column;overflow:hidden;background:#0D0D0D;}
-  .context-panel{padding:1.1rem 1.3rem;border-bottom:1px solid #1A1A1A;flex:1;overflow-y:auto;}
-  .context-panel::-webkit-scrollbar{width:4px;}
-  .context-panel::-webkit-scrollbar-thumb{background:#222;border-radius:2px;}
-  .context-empty{color:#333;font-size:12px;line-height:1.6;margin-top:0.5rem;}
-  .cited-source{padding:9px 10px;background:#131313;border:1px solid #1E1E1E;border-radius:8px;margin-bottom:7px;animation:fadeIn 0.3s ease;}
-  .cited-source-title{font-size:11px;font-weight:600;margin-bottom:3px;}
-  .cited-source-text{font-size:10.5px;color:#555;line-height:1.4;}
-  .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:1.1rem 1.3rem;border-top:1px solid #1A1A1A;}
-  .stat-card{background:#131313;border:1px solid #1E1E1E;border-radius:7px;padding:9px;}
-  .stat-value{font-size:18px;font-weight:600;color:var(--w-white);font-family:var(--mono);}
-  .stat-label{font-size:10px;color:#444;margin-top:2px;}
-  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);background:#1A1A1A;border:1px solid #2A2A2A;border-radius:8px;padding:9px 16px;font-size:12.5px;color:#ccc;opacity:0;transition:all 0.3s;pointer-events:none;z-index:100;}
-  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+<title>WePulse · Project Delivery Intelligence</title>
  
-  /* ── EXPORT TOOLBAR ── */
-  .export-toolbar{display:flex;align-items:center;gap:6px;margin-top:8px;padding-top:8px;border-top:1px solid #1A1A1A;}
-  .export-label{font-size:10px;color:#444;letter-spacing:0.5px;text-transform:uppercase;margin-right:2px;}
-  .export-btn{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:5px;border:1px solid #2A2A2A;background:#141414;color:#888;font-size:11px;font-family:var(--font);cursor:pointer;transition:all 0.15s;}
-  .export-btn:hover{border-color:#3A3A3A;color:#ccc;background:#1A1A1A;}
-  .export-btn.excel:hover{border-color:rgba(74,222,128,0.4);color:#4ADE80;}
-  .export-btn.word:hover{border-color:rgba(147,204,234,0.4);color:var(--w-blue);}
-  .export-btn.pptx:hover{border-color:rgba(206,202,229,0.4);color:var(--w-lilac);}
-  .export-btn.generating{opacity:0.5;cursor:not-allowed;pointer-events:none;}
-  .export-btn svg{width:12px;height:12px;flex-shrink:0;}
-  /* ── GENERATE MODAL ── */
-  .gen-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:200;backdrop-filter:blur(4px);}
-  .gen-modal{background:#111;border:1px solid #2A2A2A;border-radius:14px;padding:2rem;width:380px;text-align:center;}
-  .gen-modal h3{font-size:16px;font-weight:600;color:var(--w-white);margin-bottom:0.5rem;}
-  .gen-modal p{font-size:12.5px;color:#666;margin-bottom:1.5rem;line-height:1.5;}
-  .gen-spinner{width:40px;height:40px;border:3px solid #1A1A1A;border-top-color:var(--w-blue);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 1rem;}
-  @keyframes spin{to{transform:rotate(360deg);}}
-  .gen-modal .file-icon{font-size:32px;margin-bottom:0.8rem;}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pptxgenjs/3.12.0/pptxgen.bundled.js"></script>
+<style>
+:root {
+  --black:  #0A0A0A;
+  --white:  #FFFFFF;
+  --blue:   #93CCEA;
+  --lilac:  #CECAE5;
+  --bronze: #8B734D;
+  --card:   #101010;
+  --card2:  #141414;
+  --border: #1E1E1E;
+  --muted:  #585858;
+  --text:   #C8C8C8;
+  --green:  #4ADE80;
+  --amber:  #FBBF24;
+  --red:    #F87171;
+  --fd: 'Arial Black', Arial, sans-serif;
+  --fb: Arial, 'Helvetica Neue', sans-serif;
+  --fm: 'Courier New', Courier, monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:var(--fb);background:var(--black);color:var(--white);}
+ 
+/* ── SCANLINE TEXTURE ── */
+body::after{
+  content:'';position:fixed;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.04) 2px,rgba(0,0,0,0.04) 4px);
+  pointer-events:none;z-index:0;
+}
+ 
+/* ── HEADER ── */
+header{
+  position:fixed;top:0;left:0;right:0;height:54px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 1.8rem;
+  background:rgba(8,8,8,0.96);
+  border-bottom:1px solid var(--border);
+  z-index:200;
+  backdrop-filter:blur(8px);
+}
+.h-left{display:flex;align-items:center;gap:14px;}
+.h-divider{width:1px;height:20px;background:#252525;}
+.product-name{
+  font-family:var(--fd);font-size:15px;font-weight:900;
+  letter-spacing:-0.3px;
+  color:var(--white);
+}
+.product-sub{font-size:11px;color:var(--blue);font-family:Arial,sans-serif;margin-top:1px;letter-spacing:0.3px;}
+.h-right{display:flex;align-items:center;gap:12px;}
+.live-indicator{
+  display:flex;align-items:center;gap:6px;
+  font-size:11px;color:#3A3A3A;font-family:Arial,sans-serif;
+}
+.live-dot{width:7px;height:7px;background:var(--green);border-radius:50%;animation:ldot 2s infinite;}
+@keyframes ldot{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(74,222,128,0.4)}50%{opacity:.6;box-shadow:0 0 0 4px rgba(74,222,128,0)}}
+.westernacher-logo{opacity:0.6;}
+ 
+/* ── APP SHELL ── */
+.app{
+  display:grid;grid-template-columns:420px 1fr;
+  height:100vh;padding-top:54px;
+  position:relative;z-index:1;
+}
+ 
+/* ═══════════════════════════════
+   LEFT PANEL — INPUT
+═══════════════════════════════ */
+.left{
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  background:var(--black);
+}
+ 
+.left-top{
+  padding:1.4rem 1.6rem 1rem;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.section-eyebrow{
+  font-family:Arial,sans-serif;font-size:10px;
+  color:var(--blue);letter-spacing:2.5px;text-transform:uppercase;
+  margin-bottom:0.5rem;opacity:0.7;
+}
+.section-heading{
+  font-family:var(--fd);font-size:18px;font-weight:900;
+  color:var(--white);letter-spacing:-0.2px;
+}
+.section-heading span{color:var(--blue);}
+ 
+/* Example buttons */
+.examples{padding:1rem 1.6rem 0.6rem;flex-shrink:0;}
+.ex-label{font-size:10px;color:var(--blue);font-family:Arial,sans-serif;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:0.5rem;opacity:0.6;}
+.ex-grid{display:flex;flex-wrap:wrap;gap:5px;}
+.ex-btn{
+  padding:5px 10px;background:var(--card);
+  border:1px solid var(--border);border-radius:5px;
+  font-size:11.5px;color:#666;cursor:pointer;
+  transition:all 0.15s;font-family:var(--fb);
+}
+.ex-btn:hover{border-color:rgba(147,204,234,0.35);color:var(--blue);}
+ 
+/* Textarea */
+.input-wrap{flex:1;display:flex;flex-direction:column;padding:0.8rem 1.6rem;overflow:hidden;}
+.input-label{font-size:10px;color:var(--blue);font-family:Arial,sans-serif;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:0.5rem;opacity:0.6;}
+.brief-input{
+  flex:1;background:var(--card);
+  border:1px solid var(--border);border-radius:8px;
+  padding:1rem 1.1rem;
+  font-family:var(--fb);font-size:13px;color:var(--text);
+  line-height:1.65;resize:none;outline:none;
+  transition:border-color 0.2s;min-height:0;
+}
+.brief-input:focus{border-color:rgba(147,204,234,0.3);}
+.brief-input::placeholder{color:#2A2A2A;}
+ 
+/* Settings */
+.settings{
+  padding:0.7rem 1.6rem;
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;
+  border-top:1px solid var(--border);flex-shrink:0;
+}
+.sel{
+  padding:7px 9px;background:var(--card);
+  border:1px solid var(--border);border-radius:6px;
+  font-family:Arial,sans-serif;font-size:11px;color:#777;
+  outline:none;cursor:pointer;
+}
+ 
+/* Run button */
+.run-section{padding:0.8rem 1.6rem 1.2rem;flex-shrink:0;}
+.run-btn{
+  width:100%;padding:13px;
+  background:var(--blue);border:none;border-radius:8px;
+  font-family:'Arial Black',Arial,sans-serif;font-size:13px;font-weight:900;
+  color:var(--black);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:9px;
+  transition:all 0.2s;letter-spacing:-0.2px;
+  position:relative;overflow:hidden;
+}
+.run-btn:hover{box-shadow:0 6px 20px rgba(147,204,234,0.3);transform:translateY(-1px);}
+.run-btn:active{transform:translateY(0);}
+.run-btn:disabled{background:#181818;color:#333;cursor:not-allowed;transform:none;box-shadow:none;}
+.run-btn svg{width:16px;height:16px;flex-shrink:0;}
+.btn-spinner{width:16px;height:16px;border:2px solid rgba(0,0,0,0.2);border-top-color:var(--black);border-radius:50%;animation:spin 0.7s linear infinite;flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg)}}
+ 
+/* ═══════════════════════════════
+   RIGHT PANEL — OUTPUT
+═══════════════════════════════ */
+.right{
+  display:flex;flex-direction:column;
+  overflow:hidden;background:var(--black);
+}
+ 
+/* ── EMPTY STATE ── */
+.empty{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:1.2rem;padding:3rem;text-align:center;
+}
+.empty-pulse{
+  width:80px;height:80px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(147,204,234,0.08),transparent 70%);
+  border:1px solid rgba(147,204,234,0.1);
+  display:flex;align-items:center;justify-content:center;
+  font-size:32px;
+  animation:emptyFloat 3s ease-in-out infinite;
+}
+@keyframes emptyFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.empty h3{font-family:'Arial Black',Arial,sans-serif;font-size:17px;color:#222;font-weight:900;}
+.empty p{font-size:13px;color:#1E1E1E;max-width:280px;line-height:1.5;}
+ 
+/* ── OUTPUT HEADER ── */
+.out-header{
+  padding:1rem 1.8rem;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;
+  background:var(--black);
+}
+.out-title-wrap{display:flex;flex-direction:column;gap:3px;}
+.out-title{font-family:'Arial Black',Arial,sans-serif;font-size:14px;font-weight:900;color:var(--white);letter-spacing:-0.2px;}
+.out-meta{font-size:11px;color:var(--muted);font-family:Arial,sans-serif;}
+.export-row{display:flex;gap:6px;}
+.exp-btn{
+  display:flex;align-items:center;gap:5px;
+  padding:5px 11px;border-radius:5px;
+  border:1px solid var(--border);background:var(--card);
+  font-size:11px;color:#666;cursor:pointer;
+  transition:all 0.15s;font-family:var(--fb);
+}
+.exp-btn:hover{border-color:rgba(147,204,234,0.3);color:var(--blue);}
+.exp-btn svg{width:11px;height:11px;}
+ 
+/* ── OUTPUT BODY ── */
+.out-body{flex:1;overflow-y:auto;padding:1.4rem 1.8rem 2rem;}
+.out-body::-webkit-scrollbar{width:4px;}
+.out-body::-webkit-scrollbar-thumb{background:#1E1E1E;border-radius:2px;}
+ 
+/* ── HEALTH BANNER ── */
+.health-banner{
+  display:grid;grid-template-columns:auto 1fr auto;
+  gap:0;align-items:stretch;
+  border-radius:10px;overflow:hidden;
+  border:1px solid var(--border);
+  margin-bottom:14px;
+  animation:fadeUp 0.5s ease;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+ 
+.health-score-block{
+  padding:1.4rem 1.8rem;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-width:120px;
+  position:relative;
+}
+.health-score-block::after{
+  content:'';position:absolute;right:0;top:20%;bottom:20%;
+  width:1px;background:rgba(255,255,255,0.06);
+}
+.score-label{font-size:9px;font-family:Arial,sans-serif;text-transform:uppercase;letter-spacing:2px;margin-bottom:6px;}
+.score-number{
+  font-family:var(--fd);font-size:48px;font-weight:900;
+  line-height:1;letter-spacing:-1px;
+}
+.score-tag{
+  margin-top:6px;font-size:10px;font-weight:700;
+  padding:2px 8px;border-radius:3px;
+  font-family:'Arial Black',Arial,sans-serif;letter-spacing:0.5px;
+}
+ 
+/* health color classes */
+.health-green .health-score-block{background:rgba(74,222,128,0.06);}
+.health-green .score-label{color:var(--green);}
+.health-green .score-number{color:var(--green);}
+.health-green .score-tag{background:rgba(74,222,128,0.15);color:var(--green);}
+.health-amber .health-score-block{background:rgba(251,191,36,0.06);}
+.health-amber .score-label{color:var(--amber);}
+.health-amber .score-number{color:var(--amber);}
+.health-amber .score-tag{background:rgba(251,191,36,0.15);color:var(--amber);}
+.health-red .health-score-block{background:rgba(248,113,113,0.06);}
+.health-red .score-label{color:var(--red);}
+.health-red .score-number{color:var(--red);}
+.health-red .score-tag{background:rgba(248,113,113,0.15);color:var(--red);}
+ 
+.health-summary{
+  padding:1.2rem 1.4rem;
+  display:flex;flex-direction:column;justify-content:center;gap:6px;
+  background:var(--card);
+}
+.health-headline{
+  font-family:'Arial Black',Arial,sans-serif;font-size:13.5px;font-weight:900;
+  color:var(--white);line-height:1.3;
+}
+.health-detail{font-size:12px;color:#888;line-height:1.5;}
+ 
+.health-dims{
+  padding:1rem 1.2rem;background:var(--card2);
+  display:flex;flex-direction:column;justify-content:center;
+  gap:6px;min-width:130px;
+  border-left:1px solid var(--border);
+}
+.dim-row{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.dim-name{font-size:9.5px;color:var(--muted);font-family:Arial,sans-serif;}
+.dim-bar{flex:1;height:3px;background:#1E1E1E;border-radius:2px;overflow:hidden;}
+.dim-fill{height:100%;border-radius:2px;transition:width 1s ease;}
+.dim-fill.g{background:var(--green);}
+.dim-fill.a{background:var(--amber);}
+.dim-fill.r{background:var(--red);}
+ 
+/* ── SECTION CARDS ── */
+.section-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:9px;overflow:hidden;margin-bottom:10px;
+  animation:fadeUp 0.4s ease both;
+}
+.sc-header{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 13px;border-bottom:1px solid var(--border);
+  background:rgba(255,255,255,0.01);
+}
+.sc-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.sc-title{font-family:'Arial Black',Arial,sans-serif;font-size:12px;font-weight:900;color:var(--white);flex:1;letter-spacing:-0.1px;}
+.sc-count{
+  font-size:10px;font-family:Arial,sans-serif;
+  padding:2px 7px;border-radius:3px;
+  background:rgba(147,204,234,0.1);color:var(--blue);
+}
+.sc-body{padding:10px 13px;}
+ 
+/* RAID table */
+.raid-table{width:100%;border-collapse:collapse;font-size:12px;}
+.raid-table th{
+  font-size:9.5px;font-family:Arial,sans-serif;color:var(--muted);
+  text-transform:uppercase;letter-spacing:1px;
+  padding:5px 8px;border-bottom:1px solid var(--border);
+  text-align:left;font-weight:500;
+}
+.raid-table td{
+  padding:8px 8px;border-bottom:1px solid rgba(255,255,255,0.03);
+  vertical-align:top;color:#AAA;line-height:1.4;
+}
+.raid-table tr:last-child td{border-bottom:none;}
+.raid-type{
+  font-size:9.5px;font-weight:700;font-family:'Arial Black',Arial,sans-serif;
+  padding:2px 6px;border-radius:3px;white-space:nowrap;
+}
+.rt-r{background:rgba(248,113,113,0.1);color:#F87171;}
+.rt-a{background:rgba(147,204,234,0.1);color:var(--blue);}
+.rt-i{background:rgba(251,191,36,0.1);color:#FBBF24;}
+.rt-d{background:rgba(206,202,229,0.12);color:#CECAE5;}
+.sev-badge{
+  font-size:9px;font-family:'Arial Black',Arial,sans-serif;font-weight:900;
+  padding:1px 5px;border-radius:2px;
+}
+.sev-h{background:rgba(248,113,113,0.15);color:#F87171;}
+.sev-m{background:rgba(251,191,36,0.15);color:#FBBF24;}
+.sev-l{background:rgba(74,222,128,0.15);color:#4ADE80;}
+ 
+/* Actions list */
+.action-list{display:flex;flex-direction:column;gap:6px;}
+.action-item{
+  display:grid;grid-template-columns:18px 1fr auto auto;
+  gap:8px;align-items:start;
+  padding:8px 10px;
+  background:rgba(255,255,255,0.02);
+  border-radius:6px;border:1px solid rgba(255,255,255,0.04);
+}
+.action-num{
+  font-size:10px;font-family:'Arial Black',Arial,sans-serif;color:var(--blue);
+  font-weight:900;margin-top:1px;
+}
+.action-text{font-size:12.5px;color:var(--text);line-height:1.4;}
+.action-owner{
+  font-size:10px;font-family:Arial,sans-serif;color:var(--muted);
+  white-space:nowrap;background:var(--card2);
+  padding:2px 6px;border-radius:3px;margin-top:1px;
+}
+.action-due{
+  font-size:10px;font-family:Arial,sans-serif;
+  padding:2px 6px;border-radius:3px;
+  background:rgba(147,204,234,0.08);color:var(--blue);
+  white-space:nowrap;margin-top:1px;
+}
+ 
+/* Client status */
+.status-report{
+  font-size:13px;color:var(--text);line-height:1.75;
+  padding:2px 0;
+}
+.status-report strong{color:var(--white);font-weight:600;}
+ 
+/* Milestone timeline */
+.milestones{display:flex;flex-direction:column;gap:0;}
+.ms-item{
+  display:grid;grid-template-columns:90px 18px 1fr;
+  gap:0;align-items:stretch;
+  min-height:44px;
+}
+.ms-date{
+  font-size:10px;font-family:Arial,sans-serif;color:var(--muted);
+  padding:10px 12px 10px 0;
+  display:flex;align-items:flex-start;justify-content:flex-end;
+}
+.ms-spine{display:flex;flex-direction:column;align-items:center;}
+.ms-dot{
+  width:10px;height:10px;border-radius:50%;
+  flex-shrink:0;margin-top:12px;
+  border:2px solid var(--border);
+}
+.ms-dot.done{background:var(--green);border-color:var(--green);}
+.ms-dot.current{background:var(--blue);border-color:var(--blue);box-shadow:0 0 8px rgba(147,204,234,0.4);}
+.ms-dot.upcoming{background:transparent;border-color:#2A2A2A;}
+.ms-dot.at-risk{background:var(--amber);border-color:var(--amber);}
+.ms-line{flex:1;width:1px;background:var(--border);margin-top:2px;}
+.ms-item:last-child .ms-line{display:none;}
+.ms-content{padding:8px 0 8px 14px;}
+.ms-title{font-size:12.5px;font-weight:700;color:var(--white);font-family:'Arial Black',Arial,sans-serif;}
+.ms-desc{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.4;}
+.ms-status{
+  display:inline-block;margin-top:3px;font-size:9.5px;
+  font-family:var(--fm);padding:1px 5px;border-radius:2px;
+}
+.ms-done{background:rgba(74,222,128,0.1);color:var(--green);}
+.ms-cur{background:rgba(147,204,234,0.1);color:var(--blue);}
+.ms-risk{background:rgba(251,191,36,0.1);color:var(--amber);}
+.ms-up{background:rgba(80,80,80,0.3);color:#555;}
+ 
+/* ── LOADING STATE ── */
+.loading-state{
+  flex:1;display:flex;flex-direction:column;
+  padding:1.8rem;gap:12px;
+  animation:fadeUp 0.3s ease;
+}
+.loading-headline{
+  font-family:Arial,sans-serif;font-size:11px;color:var(--blue);
+  display:flex;align-items:center;gap:8px;margin-bottom:4px;
+}
+.ls{width:9px;height:9px;border:1.5px solid rgba(147,204,234,0.3);border-top-color:var(--blue);border-radius:50%;animation:spin 0.7s linear infinite;}
+.skel{height:100px;border-radius:8px;background:var(--card);border:1px solid var(--border);position:relative;overflow:hidden;}
+.skel::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent 0%,rgba(147,204,234,0.04) 50%,transparent 100%);
+  animation:shimmer 1.5s infinite;
+}
+@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.skel.tall{height:160px;}
+.skel.short{height:60px;}
+ 
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:22px;left:50%;
+  transform:translateX(-50%) translateY(10px);
+  background:#161616;border:1px solid #2A2A2A;
+  border-radius:7px;padding:9px 16px;
+  font-size:12.5px;color:#ccc;
+  opacity:0;transition:all 0.25s;
+  pointer-events:none;z-index:999;
+  white-space:nowrap;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
  
 </style>
 </head>
 <body>
+ 
+<!-- HEADER -->
 <header>
-  <div class="logo-wrap">
-    <svg width="134" height="14" viewBox="0 0 1000 103.74" fill="white" xmlns="http://www.w3.org/2000/svg">
+  <div class="h-left">
+    <!-- Westernacher logo -->
+    <svg class="westernacher-logo" width="120" height="12" viewBox="0 0 1000 103.74" fill="white">
       <path d="M34.07,101.77L0,0h22.54l20.72,68.45L66.64,0H79.7l23.8,68.45L123.95,0h22.54l-33.95,101.77H95.14L73.31,35.13l-21.83,66.64H34.07z"/>
       <path d="M217.12,71.06h-56.92c2.76,10.62,10.15,15.99,22.11,15.99c8.21,0,17.96-3.16,24.47-7.58l7.78,13.62c-9.59,6.87-20.61,10.34-33.12,10.34c-13.34,0-23.53-3.87-30.59-11.45c-7.11-7.58-10.58-16.94-10.58-27.83c0-11.45,3.63-20.8,10.97-28.23c7.38-7.42,16.82-11.17,28.5-11.17c10.97,0,20.17,3.43,27.28,10.18s10.7,15.83,10.7,27.55C217.79,65.13,217.51,68.02,217.12,71.06z M160.19,56.61h38.53c-1.82-9.79-8.92-15.71-18.91-15.71C169.94,40.9,162.56,46.82,160.19,56.61z"/>
       <path d="M353.43,97.35c-6.28,4.14-13.62,6.2-22.38,6.2c-17.41,0-26.45-10.18-26.45-29.61V42.95h-12.4V26.69h12.51V6.99l19.46-6.87v26.57h25.03v16.26h-25.03v29.73c0,8.8,3.63,13.22,10.7,13.22c3.75,0,8.05-1.22,12.67-3.87L353.43,97.35z"/>
@@ -134,780 +453,676 @@
       <path d="M951.13,101.77V26.72h18.79v10.07c4.58-8.13,11.57-12.12,20.88-12.12c3.08,0,6.12,0.55,9.2,1.66l-1.66,18.59c-3.2-0.95-6.28-1.5-9.04-1.5c-11.13,0-18.51,7.15-18.51,22.74v35.65h-19.66V101.77z"/>
       <path d="M273.57,60.6c-2.09-1.11-8.21-3.59-18.24-7.3c-4.46-1.5-6.67-3.71-6.67-6.87c0-3.43,3.47-6.32,8.61-6.32c6.24,0,12.08,2.49,17.37,7.42l8.29-13.93c-6.71-6.2-15.12-9.32-25.11-9.32c-8.49,0-15.44,2.05-20.61,6.32c-5.13,4.26-7.78,9.63-7.78,16.26c0,8.8,4.3,15.28,13.07,19.42c1.66,0.83,4.86,2.21,9.75,3.99c4.86,1.78,7.78,2.88,9.04,3.43c3.63,1.66,5.41,3.87,5.41,6.47c0,4.26-4.46,7.3-10.42,7.3c-7.66,0-16.5-2.33-21.95-8.76l-8.57,14.41c7.46,8.17,18.2,10.62,30.4,10.62c9.04,0,16.42-2.21,21.83-6.75c5.57-4.54,8.33-10.34,8.33-17.37C286.4,71.33,282.05,65.02,273.57,60.6z"/>
     </svg>
-    <div class="logo-divider"></div>
-    <span class="product-name">AI Desk</span>
+    <div class="h-divider"></div>
+    <div>
+      <div class="product-name">WePulse</div>
+      <div class="product-sub">Project Delivery Intelligence</div>
+    </div>
   </div>
-  <div class="header-right">
-    <div class="status-dot"><div class="dot"></div><span>Knowledge base active</span></div>
-    <div class="kb-badge">westernacher.com · KB v2.0</div>
+  <div class="h-right">
+    <div class="live-indicator">
+      <div class="live-dot"></div>
+      Powered by Claude AI
+    </div>
   </div>
 </header>
  
-<div class="layout">
-  <div class="sidebar-left">
-    <div class="sidebar-section">
-      <div class="sidebar-label">Knowledge Domains</div>
-      <div class="kb-domains">
-        <div class="kb-domain active" onclick="filterDomain(this)"><div class="kb-dot" style="background:#93CCEA"></div> All Domains</div>
-        <div class="kb-domain" onclick="filterDomain(this)"><div class="kb-dot" style="background:#4ADE80"></div> Company & History</div>
-        <div class="kb-domain" onclick="filterDomain(this)"><div class="kb-dot" style="background:#93CCEA"></div> Supply Chain (EWM/TM/YL/GTS)</div>
-        <div class="kb-domain" onclick="filterDomain(this)"><div class="kb-dot" style="background:#F59E0B"></div> Planning & Analytics (IBP)</div>
-        <div class="kb-domain" onclick="filterDomain(this)"><div class="kb-dot" style="background:#CECAE5"></div> ERP & S/4HANA</div>
-        <div class="kb-domain" onclick="filterDomain(this)"><div class="kb-dot" style="background:#93CCEA"></div> AI & Innovation</div>
-        <div class="kb-domain" onclick="filterDomain(this)"><div class="kb-dot" style="background:#8B734D"></div> Client References</div>
-        <div class="kb-domain" onclick="filterDomain(this)"><div class="kb-dot" style="background:#4ADE80"></div> Proprietary Tools</div>
+<div class="app">
+ 
+  <!-- ═══ LEFT PANEL ═══ -->
+  <div class="left">
+    <div class="left-top">
+      <div class="section-eyebrow">Input</div>
+      <div class="section-heading">Paste anything about your project<span>.</span></div>
+    </div>
+ 
+    <div class="examples">
+      <div class="ex-label">Load an example</div>
+      <div class="ex-grid">
+        <div class="ex-btn" onclick="loadEx('ewm')">EWM go-live risk</div>
+        <div class="ex-btn" onclick="loadEx('s4')">S/4HANA delay</div>
+        <div class="ex-btn" onclick="loadEx('ibp')">IBP hypercare</div>
+        <div class="ex-btn" onclick="loadEx('ams')">AMS escalation</div>
+        <div class="ex-btn" onclick="loadEx('gts')">GTS launch</div>
       </div>
     </div>
-    <div class="suggested-qs">
-      <div class="sq-category">Company</div>
-      <div class="sq-item" onclick="askQuestion(this.textContent)">When was Westernacher founded and where is HQ?</div>
-      <div class="sq-item" onclick="askQuestion(this.textContent)">What are our world-first SAP implementations?</div>
-      <div class="sq-item" onclick="askQuestion(this.textContent)">What awards has Westernacher won recently?</div>
-      <div class="sq-category">Supply Chain</div>
-      <div class="sq-item" onclick="askQuestion(this.textContent)">What is our EWM track record and differentiators?</div>
-      <div class="sq-item" onclick="askQuestion(this.textContent)">How do we approach SAP TM implementations?</div>
-      <div class="sq-item" onclick="askQuestion(this.textContent)">What results does SAP GTS deliver for clients?</div>
-      <div class="sq-item" onclick="askQuestion(this.textContent)">Tell me about SAP Yard Logistics</div>
-      <div class="sq-category">Client References</div>
-      <div class="sq-item" onclick="askQuestion(this.textContent)">Tell me about the Belenos Bioscience project</div>
-      <div class="sq-item" onclick="askQuestion(this.textContent)">What did we deliver for BayWa AG?</div>
-      <div class="sq-item" onclick="askQuestion(this.textContent)">Tell me about the SQM lithium warehouse project</div>
-      <div class="sq-item" onclick="askQuestion(this.textContent)">What was the Elkjøp retail project?</div>
-      <div class="sq-item" onclick="askQuestion(this.textContent)">California Steel Industries — what did we deliver?</div>
-      <div class="sq-item" onclick="askQuestion(this.textContent)">What is the Al Dahra case study?</div>
-      <div class="sq-category">ERP & Cloud</div>
-      <div class="sq-item" onclick="askQuestion(this.textContent)">How does our S/4HANA Cloud ERP assessment work?</div>
-      <div class="sq-item" onclick="askQuestion(this.textContent)">What is our AMS certification and offering?</div>
-      <div class="sq-category">AI & Tools</div>
-      <div class="sq-item" onclick="askQuestion(this.textContent)">How is Westernacher using SAP Joule?</div>
-      <div class="sq-item" onclick="askQuestion(this.textContent)">What proprietary tools does Westernacher offer?</div>
-      <div class="sq-item" onclick="askQuestion(this.textContent)">What is the Westernacher Collaboration Platform?</div>
-      <div class="sq-item" onclick="askQuestion(this.textContent)">What is the AI Council and AI Value Sprint?</div>
+ 
+    <div class="input-wrap">
+      <div class="input-label">Status email · meeting notes · Slack thread · anything</div>
+      <textarea id="briefTxt" class="brief-input"
+        placeholder="Drop anything here — a forwarded status email, rough meeting notes, a Slack thread screenshot description, a voice memo transcript.
+ 
+WePulse will extract the project health score, RAID items, milestone status, priority actions, and draft a client-ready status paragraph.
+ 
+The messier the input, the more impressive the output."></textarea>
+    </div>
+ 
+    <div class="settings">
+      <select class="sel" id="projType">
+        <option value="">Project type (auto)</option>
+        <option value="SAP EWM Implementation">SAP EWM Implementation</option>
+        <option value="SAP TM Implementation">SAP TM Implementation</option>
+        <option value="S/4HANA Conversion">S/4HANA Conversion</option>
+        <option value="SAP IBP Rollout">SAP IBP Rollout</option>
+        <option value="SAP GTS Implementation">SAP GTS Implementation</option>
+        <option value="AMS Engagement">AMS Engagement</option>
+        <option value="SAP BTP / AI Project">SAP BTP / AI Project</option>
+      </select>
+      <select class="sel" id="audience">
+        <option value="Internal PM">For: Internal PM</option>
+        <option value="Client Steering">For: Client Steering</option>
+        <option value="Delivery Lead">For: Delivery Lead</option>
+        <option value="Executive Sponsor">For: Executive Sponsor</option>
+      </select>
+    </div>
+ 
+    <div class="run-section">
+      <button class="run-btn" id="runBtn" onclick="runAnalysis()">
+        <span id="runIconSlot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
+        <span id="runLabel">Analyse Project Status</span>
+      </button>
     </div>
   </div>
  
-  <div class="main">
-    <div class="chat-area" id="chatArea">
-      <div class="welcome" id="welcomeState">
-        <div class="welcome-icon">⬡</div>
-        <h2>Westernacher AI Desk</h2>
-        <p>Ask anything about our capabilities, client success stories, proprietary tools, methodology, or AI strategy. Grounded in real Westernacher knowledge.</p>
-        <div class="welcome-chips">
-          <div class="chip" onclick="askQuestion(this.textContent)">World-first implementations</div>
-          <div class="chip" onclick="askQuestion(this.textContent)">Client case studies</div>
-          <div class="chip" onclick="askQuestion(this.textContent)">SAP Joule & AI</div>
-          <div class="chip" onclick="askQuestion(this.textContent)">EWM capabilities</div>
-          <div class="chip" onclick="askQuestion(this.textContent)">Awards & recognition</div>
-        </div>
-      </div>
-    </div>
-    <div class="input-area">
-      <div class="input-wrap">
-        <textarea id="msgInput" placeholder="Ask about Westernacher's capabilities, clients, tools, or AI strategy…" rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
-        <button class="send-btn" id="sendBtn" onclick="sendMessage()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-        </button>
-      </div>
-      <div class="input-meta">
-        <span>Grounded in westernacher.com · SAP Gold Partner since 1993</span>
-        <span id="msgCount">0 exchanges</span>
-      </div>
+  <!-- ═══ RIGHT PANEL ═══ -->
+  <div class="right" id="rightPanel">
+    <div class="empty" id="emptyState">
+      <div class="empty-pulse">📡</div>
+      <h3>No pulse yet.</h3>
+      <p>Paste any project input on the left and WePulse will read the signal in seconds.</p>
     </div>
   </div>
  
-  <div class="sidebar-right">
-    <div class="context-panel" id="contextPanel">
-      <div class="sidebar-label">Sources Referenced</div>
-      <div class="context-empty" id="contextEmpty">Sources cited in the last response will appear here.</div>
-    </div>
-    <div class="stats-grid">
-      <div class="stat-card"><div class="stat-value">55+</div><div class="stat-label">Years SAP expertise</div></div>
-      <div class="stat-card"><div class="stat-value" id="statEx">0</div><div class="stat-label">Exchanges</div></div>
-      <div class="stat-card"><div class="stat-value">1,300+</div><div class="stat-label">Consultants</div></div>
-      <div class="stat-card"><div class="stat-value">25+</div><div class="stat-label">Countries</div></div>
-    </div>
-  </div>
 </div>
+ 
 <div class="toast" id="toast"></div>
  
 <script>
-const KB = `=== WESTERNACHER CONSULTING — KNOWLEDGE BASE v2.0 ===
-Source: westernacher.com | SAP Gold Partner | Founded 1969 | Heidelberg HQ
+// ── EXAMPLE DATA ─────────────────────────────────────────────────
+const EXAMPLES = {
+  ewm: `From: Marcus Bauer <m.bauer@client.com>
+To: Project Team
+Subject: EWM Week 14 – concerns
  
-━━━ COMPANY PROFILE ━━━
-Founded: 1969 in Karlsruhe; headquartered in Heidelberg, Germany. Tagline: "Nonstop Innovation."
-Size: ~1,200–1,300 consultants worldwide (2025). SAP Gold Partner since 1993 — 30+ years of strategic SAP partnership.
-Carbon neutral since 2021. Active in Europe, Asia, North America, South America. Main European focus: Germany, Switzerland, Austria.
-Key offices: Heidelberg (HQ), Bangalore, Dubai, Singapore, Sydney, Chicago, São Paulo, Warsaw, Taiwan, Mexico City.
-Industries: Manufacturing, Logistics, Retail & Consumer Goods, Life Sciences, Utilities, Automotive, Agribusiness, Mining, Chemical.
+Team,
  
-━━━ AWARDS & RECOGNITION ━━━
-- SAP Global Supply Chain Management Partner Excellence FINALIST 2025 — Indirect Sales & Customer Success. First award at UK&IR PKOM.
-- SAP Supply Chain Excellence Award 2025 — received at SAP Partner Kick-Off Meeting (PKOM).
-- SAP S/4HANA Operations Certification — benchmark in cloud-ready excellence.
-- Solutions available on SAP App Center/Store — SAP-certified partner packages.
-- Belenos Biosciences project shortlisted for SAP Innovation Awards 2026.
+Quick update from this morning's call. The warehouse supervisor raised concerns about the RF picking screens — users are struggling with the new flow and we had 3 wrong putaway incidents in the test environment last Wednesday. IT confirmed the middleware connection to ECC is still intermittent, apparently a firewall rule that Basis hasn't resolved yet.
  
-━━━ WORLD-FIRST & PIONEERING IMPLEMENTATIONS ━━━
-- World's first comprehensive SAP TM implementation with integrated e-commerce.
-- One of the first SAP TM implementations on HANA and as TM Cloud Edition.
-- World's first SAP Yard Logistics (YL) implementation — leading YL partner in automotive, retail, agriculture, oil & gas.
-- Among the very first to implement SAP IBP, S&OP on HANA, SAP BW on HANA.
-- World's first SAP Service Parts Planning (SPP) implementation.
-- World's first SAP IoT solution for silos; first SAP IoT solution in a partner package.
-- First SAP S/4HANA Simple Finance solution; first S/4HANA cloud solution; first S/4HANA conversion in mechanical engineering.
-- Among the first to implement embedded SAP EWM and embedded SAP TM.
-- World's first SAP S/4 Decentralized EWM implementation (PPG AC France).
-- World's first SAP EWM-based robotic intelligence system (Hasco Vision China).
-- First to implement SAP TM embedded in SAP S/4HANA.
-- First SAP BW on HANA; first SAP-qualified partner packages for SAP Analytics Cloud.
+On the positive side, the WePick app demo went really well yesterday and the client loves it. Master data quality is still a problem though — about 22% of storage bin data is wrong or missing and we haven't had sign-off from the warehouse manager on the final bin structure.
  
-━━━ SAP EWM (EXTENDED WAREHOUSE MANAGEMENT) ━━━
-25+ years of SAP EWM experience. One of the world's leading EWM implementation partners.
-Capabilities: Large/small warehouses, manual or automated; MFS integration; robotics (AMRs, robotic arms, AS-RS); omnichannel fulfilment; labour management; slotting; wave management; cross-docking; yard management; IoT-enabled forklift integration; Connected Kanban.
-Proprietary tools: "We Scan" UI5 mobile scanning app (reduces processing time by 40%); "We Pick" picking app; pre-configured EWM package delivering core functionality in 12 weeks; EWM Insights on SAP Datasphere (free on SAP App Center) — 40+ predefined KPIs for multi-warehouse monitoring.
+Go-live is in 6 weeks. I'm worried. The UAT window starts Monday and we don't have a clean environment. Budget is also getting tight — we've used 78% of the implementation budget with 6 weeks left.
  
-━━━ SAP TM (TRANSPORTATION MANAGEMENT) ━━━
-Global leader in SAP TM. 25+ years experience. First to implement SAP TM embedded in S/4HANA.
-Capabilities: All transport modes (road, rail, ocean, air); freight cost management; automated invoice verification; carrier collaboration; tendering; event management; track & trace; EDI integration; telematics integration.
-Proprietary tools:
-- Westernacher Collaboration Platform (WCP): SAP Fiori-based carrier/partner collaboration portal. Compatible with all SAP TM versions. Cloud-deployable. Real-time collaboration and reporting.
-- Westernacher Control Tower: Fiori-based exception management. Management-by-exception visibility across logistics operations. Analytical dashboards.
-- Westernacher Driver Application: Mobile app for drivers; real-time tour execution; ePOD; event reporting; barcode scanning; SAP TM integration.
+Thoughts?`,
  
-━━━ SAP YARD LOGISTICS (YL) ━━━
-World's first SAP Yard Logistics implementation. Leading YL partner in automotive, retail, agriculture, oil & gas.
-Capabilities: Gate management, dock scheduling, trailer tracking, real-time yard visibility, asset utilisation. Proprietary: "We Yard" solution.
+  s4: `Meeting notes – S/4HANA Conversion Steering, Tuesday
  
-━━━ SAP GTS (GLOBAL TRADE SERVICES) ━━━
-Capabilities: Automated customs compliance, sanctioned party screening, embargo checks, license determination, FTA management, Intrastat reporting.
-Results: 95%+ automation of sanctioned party screening; 60–80% reduction in customs processing time; 30–50% duty savings; 70–80% reduction in manual processing. Implementation: 6–12 months. Cloud (GTS E4H) and on-premise options. Integrates with SAP S/4HANA, ECC, TM, EWM, and non-SAP ERPs.
+Attendees: Project Director, SAP Lead, Finance Lead, IT Director, Client PMO
  
-━━━ SAP IBP (INTEGRATED BUSINESS PLANNING) ━━━
-Among the very first SAP IBP implementers (since 2014). Fast Solutions: Demand planning live in 9 weeks; S&OP live in 16 weeks.
-Capabilities: Demand planning, supply planning, S&OP, inventory optimisation, IBP Control Tower, demand sensing.
-Real-time dashboards: 40+ KPIs — inventory accuracy, order fill rates, labour productivity, space utilisation.
+Key points raised:
+- SUM tool ran over the weekend. Took 18 hours instead of the expected 9. Technical team investigating. May require a second test conversion weekend before the cutover.
+- Custom code remediation: 847 objects total, 612 cleared, 235 remaining. Of those 235, around 40 are "critical path" — these need to be resolved before the final dress rehearsal in 3 weeks.
+- Finance lead flagged that the new asset accounting configuration has a discrepancy in the depreciation calculation — affects about 1,200 assets. Being investigated now.
+- Data migration: vendor open items migration failed validation twice. Root cause identified (duplicate business partner records), fix in progress.
+- Go-live date: October 14th. Client IT director questioned whether this is still realistic. Project Director confirmed it is but acknowledged it is tight.
+- Budget: approved contingency of €180k has been partially consumed (€95k used). Remaining buffer may not be sufficient if SUM issue requires additional weekend.`,
  
-━━━ SAP SPP & eSPP (SERVICE PARTS PLANNING) ━━━
-World's first SAP SPP implementation. Since 2005, advising companies in spare parts logistics.
-Capabilities: Statistical forecasting for intermittent demand, multi-echelon optimisation, fair share distribution, service level simulation.
-Industries: Automotive aftermarket, industrial machinery, medical devices, aviation MRO.
+  ibp: `Hi all,
  
-━━━ SAP ANALYTICS CLOUD (SAC) & DATASPHERE ━━━
-First SAP-qualified partner packages for SAC. Capabilities: Business planning, supply chain planning, sustainability analytics, mobile BI apps.
-EWM Insights on Datasphere: Free on SAP App Center; 40+ predefined warehouse KPIs; multi-warehouse visibility.
+We're now 3 weeks into hypercare on the IBP go-live. A few things I need to flag before tomorrow's call:
  
-━━━ SAP S/4HANA & ERP ━━━
-Services: Greenfield, brownfield, system conversion, RISE with SAP, GROW with SAP.
-Cloud ERP Assessment Starter Packages: 2–4 weeks using SAP Signavio + SNP. Identifies process improvements and custom code issues. Suitable for all company sizes.
-AMS (Application Management Services): SAP S/4HANA Operations Certified. Covers incident, request, and problem management with proactive monitoring. Continuous improvement. Follow-the-sun delivery. Framework: SAP Activate, Cloud ALM, Signavio, LeanIX.
+The demand planners are still not using the system properly — adoption is lower than expected. About 60% are logging in regularly but only 4 out of 12 planners are actually submitting their consensus numbers in IBP. The rest are still using Excel.
  
-━━━ SAP SIGNAVIO & LEANIX ━━━
-SAP Signavio: Process discovery, mining, modelling, workflow automation. Used in cloud ERP assessments and Activate-based delivery.
-SAP LeanIX: Enterprise architecture management — IT governance, compliance, S/4HANA transition roadmaps.
+The S&OP cycle ran for the first time last Monday. It technically worked but took 6 hours longer than planned because the demand sensing integration kept timing out. The IT team says it's a data volume issue and they're working on it but no ETA.
  
-━━━ SAP BTP (BUSINESS TECHNOLOGY PLATFORM) ━━━
-Services: Integration Suite (CPI), Extension Suite, AI Core, SAP Generative AI Hub.
-Used for clean-core side-by-side extensions and AI integration. SAP announced MCP hosting in Integration Suite (Q2 2026) for Claude, Cursor, Windsurf.
+Forecast accuracy: week 1 was 71%, week 2 was 68%, week 3 is 65%. We expected it to improve after go-live but it's moving in the wrong direction. Possible causes are the history cutover (we only migrated 18 months of history when 24 was recommended) and the planner adoption issue above.
  
-━━━ AI & INNOVATION STRATEGY ━━━
-SAP JOULE FOR CONSULTANTS:
-Westernacher was an early adopter of SAP Joule for Consultants.
-Impact: Consultants reduce time interpreting code by up to 40%. Faster transformation roadmaps, system documentation, and impact assessments. Enhanced onboarding.
-Quote — Neil Wightman, COO SEA: "Westernacher empowers our teams to reduce time spent on research, navigate complex system landscapes more efficiently, and deliver solutions faster."
+On the positive side — the control tower exception view is being used well by the supply planning team and they've already resolved 3 major shortage situations using it.`,
  
-AI COUNCIL (India · Middle East · APAC):
-Mission: Deliver measurable profitability and operational improvements using AI aligned to Westernacher's SAP + Supply Chain + Process Transformation strengths.
-Operating model: "Two Factories, One Council" — AI Revenue Factory + AI Delivery Factory.
-AI Allies Network: Cross-org community for AI knowledge sharing.
-AI Value Sprint: 2-week fixed-fee prototype engagement → paid pilot conversion.
-AI Agent Catalog: Supply Chain Exception Agent, Planning Insight Agent (IBP-style), Process Intelligence Agent (Signavio-style), HR Service Agent (SuccessFactors-style), Incident Triage Agent, Consulting Productivity Agent.
+  ams: `AMS Monthly Review — Vorwerk
  
-━━━ CLIENT REFERENCES ━━━
+This month we had 47 incidents in total: 8 P1, 19 P2, 20 P3.
  
-[BELENOS BIOSCIENCES] Industry: Biotech / Life Sciences | Region: New York, USA
-Context: Biotech startup (2024), raised ~$55M seed funding; needed SAP for IPO readiness.
-Challenge: Manual spreadsheet processes; urgent tax filing; investor-grade financials required.
-Solution: SAP S/4HANA Cloud Public Edition (finance + procurement) + SAP Concur. Implemented in 12 weeks. SOX/SSAE18 controls embedded.
-Results: GAAP-aligned financials; manual reconciliations reduced by up to 70%; >95% R&D cost tracking accuracy.
-Quotes: CFO Tania Dimitrova: "I've never heard of another company of our size filing first tax returns with a system like SAP." Controller Sam Amoresano: "Now I'm able to produce a trial balance and financials for our investors."
-Recognition: Shortlisted for SAP Innovation Awards 2026.
+Of the 8 P1s, 5 were resolved within SLA (2hr). 3 were breached — the longest was 4.5 hours. Root cause was the on-call engineer was unavailable on a public holiday and the backup procedure wasn't followed. We've since updated the escalation matrix.
  
-[BAYWA AG] Industry: Agriculture / Construction / Energy | Region: Germany (global, 40+ countries)
-Context: International group; Project LEO (Logistics Excellence Offensive) — standardise transport.
-Challenge: Legacy custom-built transport system; siloed operations.
-Solution: Global SAP TM implementation; Trimble Telematics integration; SAP EM, Control Tower, EDI. Team of 10+ consultants from 7 countries.
-Results: Standardised transport processes across divisions; real-time track & trace; freight cost control; on-time delivery improvements. Own fleet management.
+Top recurring issue: EWM-ECC interface errors when the RFC connection drops. This happened 11 times this month. We've raised it as a problem ticket and are working with the client Basis team on a permanent fix.
  
-[SQM — SOCIEDAD QUÍMICA Y MINERA] Industry: Mining / Lithium | Region: Chile
-Context: One of the world's largest lithium producers; growing global demand for lithium.
-Challenge: Manual warehouse processes; needed fully SAP-controlled operations.
-Solution: SAP EWM + PP + QM. Automated storage, location tracking, container loading, inventory management.
-Results: Full warehouse visibility; zero Handling Unit (HU) storage errors; faster data access; reduced container preparation time. Operators guided by handheld devices.
-Quote — Fernando Frederick, SAP PM at SQM: "SQM attributes project success to Westernacher's expertise in managing technical and organizational challenges."
+Client satisfaction: CSAT score this month is 3.2/5, down from 3.8 last month. Main feedback is that communication during P1 incidents needs improvement — clients want proactive updates every 30 minutes, not just at resolution.
  
-[ELKJØP] Industry: Retail (Consumer Electronics) | Region: Nordics (Denmark, Norway, Sweden, Finland)
-Context: Nordic retail giant (400+ stores); needed next-gen last-mile delivery during COVID-19.
-Solution: SAP TM + EWM + 3 mobile apps + EDI + SAP Carrier Collaboration Portal. Rolled out to 36 stores in Denmark during COVID, then ~400 stores across Scandinavia.
-Results: Best-in-class last-mile delivery; fully automatic home delivery planning; full visibility for employees and customers.
+Change requests: 14 submitted, 12 approved, 9 completed. 2 CRs are stuck awaiting client business sign-off for 3 weeks.
  
-[CALIFORNIA STEEL INDUSTRIES (CSI)] Industry: Steel Manufacturing | Region: Fontana, California, USA
-Context: Leading West Coast steel manufacturer; 2M+ tonnes capacity; 5 product lines.
-Challenge: Manual load consolidation and rail car assignment; no freight automation.
-Solution: SAP TM implementation (January 2019 go-live); automated truck and rail car load planning; freight payment, tendering, rail car assignment.
-Results: 98% automation of invoice verification (unprecedented for US customers at the time); fully automated rail planning; no new headcount. Described by CSI as "an amazing success."
+Upcoming: client's year-end processing starts in 6 weeks. We need to agree the hypercare team allocation and blackout change freeze dates.`,
  
-[AL DAHRA HOLDING] Industry: Agribusiness | Region: Abu Dhabi, UAE (45+ markets)
-Context: Multinational agribusiness leader; 5,000 employees; 20+ countries.
-Challenge: Siloed supply chain; excessive manual freight booking causing errors and delays.
-Solution: First-ever SAP Business Network for Logistics implementation in the Middle East. SAP TM + SAP Business Network Freight Collaboration. Connected 13 land carriers across 8 countries. Integrated Descartes (ocean), Agility 3PL.
-Results: Eliminated Excel/email carrier coordination; automated freight booking and status updates; real-time carrier visibility; seamless dispute handling.
+  gts: `Quick status before the board call —
  
-[UNITED SUGARS CORPORATION (USC)] Industry: Sugar / Food & Beverage | Region: Minnesota, USA
-Context: Leading US sugar marketer; ~28% US market share.
-Challenge: Third-party carrier settlement to be brought in-house; manual rail and truck planning.
-Solution: SAP TM Phase 1 (rail automation + financial settlement) + Phase 2 (truck automation). Tight SAP ERP FI integration.
-Results: 98% automation of invoice verification — unprecedented for US customers. Fully automated rail planning. No new headcount. Eliminated third-party settlement costs.
+GTS go-live was last Thursday. Overall it went reasonably well but we have some open items.
  
-[PPG AC FRANCE] Industry: Coatings | Region: France
-Solution: World's first SAP S/4 Decentralized EWM implementation (at one of PPG's largest European DCs).
+Sanctioned party screening is live and working — 100% of orders now go through automated SPL check. No manual workarounds needed there.
  
-[HASCO VISION CO.] Industry: Automotive Supplier | Region: China
-Solution: World's first SAP EWM-based robotic intelligence system in their warehouse.
+Customs declarations: ATLAS integration is functional but we're seeing a 12% error rate on export declarations. The customs team is manually correcting these. Root cause is a mapping issue with commodity codes — about 300 materials have incorrect HS codes in the master data. The client's trade compliance team is correcting them but it's slow going.
  
-[INEOS STYROLUTION] Industry: Styrenics / Chemicals | Region: Global
-Solution: SAP IBP for global supply planning. Better equipped to meet global demand.
+FTA preferential origin: not live yet. We agreed this would be phase 2 but the client's CFO mentioned on a call yesterday that he expected it to be included in phase 1. This needs to be managed carefully — it's not in scope but the expectation was set differently.
  
-[BACHEM] Industry: Life Sciences | Region: Switzerland
-Solution: Synchronized planning — SAP IBP + SAP ePP/DS. Successful go-live.
+License management module: live and working well. 0 license check failures in the first week.
  
-[3M] Industry: Diversified Manufacturing | Region: Global
-Solution: Global warehouse template rollout with SAP EWM.
- 
-[FORD] Industry: Automotive | Region: Global
-Solution: Complete SAP SPM (Service Parts Management) solution.
- 
-[ZENTIS] Industry: Food & Beverage | Region: Germany
-Solution: World's first Connected Silo (SAP IoT solution for silo management).
- 
-[WUMART] Industry: Retail / Grocery | Region: China
-Solution: SAP TM + EWM distribution management for 1,000+ hypermarkets and stores.
- 
-[EWE] Industry: Energy / Utilities | Region: Germany
-Solution: Modernised reporting with SAP Datasphere and SAP Analytics Cloud.
- 
-[CARLSBERG BRITVIC] Industry: Beverages | Region: UK/Ireland
-Solution: Digital transformation in warehouse operations with SAP EWM.
- 
-[JOHN KEELLS] Industry: Diversified Conglomerate | Region: Sri Lanka
-Solution: Future-proof warehouse management with SAP EWM.
- 
-━━━ PROPRIETARY TOOLS (Instant Innovation Tools) ━━━
-1. Westernacher Collaboration Platform (WCP): SAP Fiori carrier/partner portal; all TM versions; cloud-ready.
-2. Westernacher Control Tower: Fiori exception management and analytics for TM operations.
-3. Westernacher Driver Application: Mobile ePOD and tour execution for drivers.
-4. We Scan UI5: Mobile-friendly SAP EWM RF screens; 40% efficiency gain.
-5. We Pick App: Advanced warehouse picking solution.
-6. We Yard: SAP Yard Logistics operations tool.
-7. EWM Insights on SAP Datasphere: Free on SAP App Center; 40+ warehouse KPIs.
-8. Connected Silo: World's first SAP IoT silo solution (Zentis).
-9. Connected Forklift: IoT forklift integration for real-time tracking.
-10. Connected Kanban: Real-time material replenishment via Neoception + SAP EWM.
-11. Cloud ERP Assessment Starter Packages: 2–4 weeks; Signavio + SNP; for all company sizes.
- 
-━━━ KEY DIFFERENTIATORS ━━━
-1. Pioneer: Consistently first to implement new SAP technologies globally.
-2. Deep specialisation: 55+ years focused exclusively on SAP.
-3. Scale with quality: 1,200–1,300 consultants; global but expertise-driven.
-4. Proprietary tools: Unique Instant Innovation Tools beyond standard SAP.
-5. End-to-end supply chain: Planning (IBP, SPP) + Execution (EWM, TM, YL) + Compliance (GTS).
-6. AI-native: SAP Joule adoption; AI Council; AI embedded in methodology.
-7. Carbon neutral since 2021.
-8. SAP reseller: Complete SAP solutions from one trusted partner.`;
- 
-const SOURCE_MAP = {
-  'BELENOS':{'title':'Belenos Bioscience — S/4HANA Cloud','color':'#CECAE5'},
-  'BAYWA':{'title':'BayWa AG — SAP TM','color':'#93CCEA'},
-  'SQM':{'title':'SQM — SAP EWM (Lithium)','color':'#8B734D'},
-  'ELKJØP':{'title':'Elkjøp — TM+EWM Retail','color':'#93CCEA'},
-  'ELKJOP':{'title':'Elkjøp — TM+EWM Retail','color':'#93CCEA'},
-  'CALIFORNIA STEEL':{'title':'California Steel — SAP TM','color':'#CECAE5'},
-  'CSI':{'title':'California Steel — SAP TM','color':'#CECAE5'},
-  'AL DAHRA':{'title':'Al Dahra — Business Network','color':'#8B734D'},
-  'UNITED SUGARS':{'title':'United Sugars — SAP TM','color':'#93CCEA'},
-  'USC':{'title':'United Sugars — SAP TM','color':'#93CCEA'},
-  'PPG':{'title':'PPG France — Decentralised EWM','color':'#4ADE80'},
-  'HASCO':{'title':'Hasco Vision — Robotic EWM','color':'#F59E0B'},
-  'INEOS':{'title':'INEOS Styrolution — IBP','color':'#93CCEA'},
-  'BACHEM':{'title':'Bachem — IBP + ePP/DS','color':'#CECAE5'},
-  '3M':{'title':'3M — Global EWM Rollout','color':'#8B734D'},
-  'FORD':{'title':'Ford — SAP SPM','color':'#93CCEA'},
-  'ZENTIS':{'title':'Zentis — Connected Silo','color':'#4ADE80'},
-  'WUMART':{'title':'Wumart — TM+EWM China','color':'#F59E0B'},
-  'EWE':{'title':'EWE — SAP Datasphere/SAC','color':'#93CCEA'},
-  'CARLSBERG':{'title':'Carlsberg Britvic — EWM','color':'#CECAE5'},
-  'JOHN KEELLS':{'title':'John Keells — SAP EWM','color':'#8B734D'},
-  'EWM':{'title':'SAP EWM Capability','color':'#4ADE80'},
-  'SAP TM':{'title':'SAP TM Capability','color':'#93CCEA'},
-  'IBP':{'title':'SAP IBP Planning','color':'#F59E0B'},
-  'S/4HANA':{'title':'S/4HANA Practice','color':'#CECAE5'},
-  'GTS':{'title':'SAP GTS Trade Services','color':'#8B734D'},
-  'JOULE':{'title':'SAP Joule AI','color':'#93CCEA'},
-  'AI COUNCIL':{'title':'AI Council Strategy','color':'#93CCEA'},
-  'WCP':{'title':'Westernacher Collab Platform','color':'#4ADE80'},
-  'CONTROL TOWER':{'title':'Westernacher Control Tower','color':'#93CCEA'},
-  'AMS':{'title':'AMS / Continuous Improvement','color':'#4ADE80'},
-  'SIGNAVIO':{'title':'SAP Signavio','color':'#8B734D'},
-  'YARD LOGISTICS':{'title':'SAP Yard Logistics','color':'#93CCEA'},
-  'DATASPHERE':{'title':'SAP Datasphere / SAC','color':'#F59E0B'},
-  'SPP':{'title':'SAP SPP Service Parts','color':'#CECAE5'},
+The client compliance director is happy overall but wants a written status update for the board by end of week.`
 };
  
-const state={messages:[],exchanges:0,loading:false};
+// ── CURRENT RESULT ────────────────────────────────────────────────
+let currentResult = null;
  
  
-function extractSources(text){
-  const found=[];const upper=text.toUpperCase();
-  for(const[key,val]of Object.entries(SOURCE_MAP)){if(upper.includes(key.toUpperCase()))found.push(val);}
-  return[...new Map(found.map(s=>[s.title,s])).values()].slice(0,6);
+function loadEx(key) {
+  document.getElementById('briefTxt').value = EXAMPLES[key];
 }
  
-async function callClaude(msg){
-  const sys=`You are the Westernacher AI Desk — an intelligent internal knowledge assistant for Westernacher Consulting, a global SAP Gold Partner consulting firm founded in 1969.
-Answer questions using the knowledge base below. Be specific. Reference client names, real metrics, real quotes, and specific product names. Use **bold** for key terms.
-Format: concise paragraphs or short bullets. 3–8 sentences unless complexity demands more. Never invent facts not in the knowledge base.
-KNOWLEDGE BASE:\n${KB}`;
-  // Keep only last 6 messages to limit request body size
-  const history = state.messages.slice(-6).map(m=>({role:m.role,content:m.content}));
-  const messages=[...history,{role:'user',content:msg}];
-  const resp=await fetch('https://we-ai-regional-summit.emirduvif.workers.dev/', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:sys,messages})
-  });
-  if(!resp.ok){
-    const errText = await resp.text().catch(()=>'');
-    throw new Error(`API ${resp.status}${errText? ': '+errText.slice(0,80): ''}`);
-  }
-  const data=await resp.json();
-  return data.content[0].text;
-}
- 
-function renderMessage(role,content,sources=[]){
-  const w=document.getElementById('welcomeState');if(w)w.remove();
-  const ca=document.getElementById('chatArea');
-  const div=document.createElement('div');div.className=`message ${role}`;
-  const lbl=document.createElement('div');lbl.className='msg-role';lbl.textContent=role==='user'?'You':'AI Desk';
-  const bub=document.createElement('div');bub.className='msg-bubble';
-  const html=content.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\n\n/g,'</p><p>').replace(/\n- /g,'</p><ul><li>').replace(/^- /gm,'<li>');
-  bub.innerHTML=`<p>${html}</p>`;
-  if(role==='assistant'&&sources.length>0){
-    const row=document.createElement('div');row.className='sources-row';
-    sources.forEach(s=>{const t=document.createElement('div');t.className='source-tag';t.innerHTML=`<span style="width:6px;height:6px;border-radius:50%;background:${s.color};display:inline-block;flex-shrink:0"></span>${s.title}`;row.appendChild(t);});
-    bub.appendChild(row);
-  }
-  // Add export toolbar to assistant messages
-  if(role==='assistant'){
-    const toolbar=document.createElement('div');toolbar.className='export-toolbar';
-    toolbar.innerHTML=`<span class="export-label">Export</span>
-      <button class="export-btn excel" onclick="exportFile('excel',this)" title="Export to Excel">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Excel
-      </button>
-      <button class="export-btn word" onclick="exportFile('word',this)" title="Export to Word">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Word
-      </button>
-      <button class="export-btn pptx" onclick="exportFile('pptx',this)" title="Export to PowerPoint">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>PPTX
-      </button>`;
-    bub.appendChild(toolbar);
-  }
-  div.appendChild(lbl);div.appendChild(bub);ca.appendChild(div);ca.scrollTop=ca.scrollHeight;
-}
- 
-function showTyping(){
-  const ca=document.getElementById('chatArea');
-  const div=document.createElement('div');div.className='message assistant';div.id='typingMsg';
-  const lbl=document.createElement('div');lbl.className='msg-role';lbl.textContent='AI Desk';
-  const t=document.createElement('div');t.className='typing';t.innerHTML='<span></span><span></span><span></span>';
-  div.appendChild(lbl);div.appendChild(t);ca.appendChild(div);ca.scrollTop=ca.scrollHeight;
-}
-function removeTyping(){const t=document.getElementById('typingMsg');if(t)t.remove();}
- 
-function updateContext(sources){
-  const panel=document.getElementById('contextPanel');
-  panel.querySelectorAll('.cited-source').forEach(el=>el.remove());
-  const empty=document.getElementById('contextEmpty');
-  if(sources.length===0){if(empty)empty.style.display='block';return;}
-  if(empty)empty.style.display='none';
-  sources.forEach(s=>{const div=document.createElement('div');div.className='cited-source';div.innerHTML=`<div class="cited-source-title" style="color:${s.color}">${s.title}</div><div class="cited-source-text">Referenced from Westernacher knowledge base.</div>`;panel.appendChild(div);});
-}
- 
-async function sendMessage(text){
-  const input=document.getElementById('msgInput');
-  const msg=(text||input.value).trim();
-  if(!msg||state.loading)return;
-  input.value='';autoResize(input);
-  state.loading=true;
-  document.getElementById('sendBtn').disabled=true;
-  renderMessage('user',msg);showTyping();
-  try{
-    let reply;
-    try {
-      reply = await callClaude(msg);
-    } catch(netErr) {
-      // One automatic retry on network failure
-      if(netErr.message==='Failed to fetch'||netErr.message.includes('network')||netErr.message.includes('Network')) {
-        await new Promise(r=>setTimeout(r,1200));
-        reply = await callClaude(msg);
-      } else {
-        throw netErr;
-      }
-    }
-    removeTyping();
-    const sources=extractSources(reply);
-    renderMessage('assistant',reply,sources);
-    updateContext(sources);
-    state.messages.push({role:'user',content:msg},{role:'assistant',content:reply});
-    if(state.messages.length>12)state.messages=state.messages.slice(-12);
-    state.exchanges++;
-    document.getElementById('statEx').textContent=state.exchanges;
-    document.getElementById('msgCount').textContent=`${state.exchanges} exchange${state.exchanges!==1?'s':''}`;
-  } catch(err) {
-    removeTyping();
-    const userMsg = err.message==='Failed to fetch'
-      ? 'Network error — check your connection and try again.'
-      : err.message.startsWith('API')
-        ? `API error ${err.message.replace('API ','')} — please try again.`
-        : `Error: ${err.message}`;
-    renderMessage('assistant', userMsg);
-  } finally {
-    state.loading=false;
-    document.getElementById('sendBtn').disabled=false;
-    document.getElementById('msgInput').focus();
-  }
-}
- 
+// ── CLAUDE API CALL ───────────────────────────────────────────────
  
   if (!key.startsWith('sk-ant-')) { err.textContent = 'Key should start with sk-ant- — check and try again.'; return; }
   API_KEY = key;
-  document.getElementById('msgInput').focus();
 }
-function askQuestion(q){sendMessage(q);}
-function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}}
-function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,120)+'px';}
-function filterDomain(el){document.querySelectorAll('.kb-domain').forEach(x=>x.classList.remove('active'));el.classList.add('active');showToast('Domain: '+el.textContent.trim());}
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);}
-document.getElementById('msgInput').focus();
+async function callClaude(brief, projType, audience) {
+  const system = `You are WePulse — a project delivery intelligence engine for Westernacher Consulting, a global SAP Gold Partner.
  
+Analyse the project input and extract structured intelligence. Return ONLY valid JSON with this exact structure — no markdown, no explanation:
  
-// ── FILE GENERATION FUNCTIONS ────────────────────────────────────
- 
-function getLastAssistantText(btn) {
-  // Find the message bubble this button belongs to
-  const bubble = btn.closest('.msg-bubble');
-  const paras = bubble.querySelectorAll('p, li');
-  return Array.from(paras).map(p => p.textContent).join('\n').trim();
-}
- 
-async function exportFile(type, btn) {
-  const responseText = getLastAssistantText(btn);
-  
-  // Disable all export buttons in this toolbar
-  const toolbar = btn.closest('.export-toolbar');
-  toolbar.querySelectorAll('.export-btn').forEach(b => b.classList.add('generating'));
-  showGenModal(type);
-  
-  try {
-    if (type === 'excel') await generateExcel(responseText);
-    else if (type === 'word') await generateWord(responseText);
-    else if (type === 'pptx') await generatePPTX(responseText);
-  } catch(e) {
-    console.error(e);
-    showToast('Generation failed: ' + e.message);
-  }
-  
-  hideGenModal();
-  toolbar.querySelectorAll('.export-btn').forEach(b => b.classList.remove('generating'));
-}
- 
-// ── MODAL ────────────────────────────────────────────────────────
-function showGenModal(type) {
-  const icons = { excel: '📊', word: '📄', pptx: '📑' };
-  const labels = { excel: 'Excel Spreadsheet', word: 'Word Document', pptx: 'PowerPoint Presentation' };
-  const existing = document.getElementById('genModal');
-  if (existing) existing.remove();
-  const overlay = document.createElement('div');
-  overlay.className = 'gen-overlay'; overlay.id = 'genModal';
-  overlay.innerHTML = `<div class="gen-modal">
-    <div class="file-icon">${icons[type]}</div>
-    <div class="gen-spinner"></div>
-    <h3>Generating ${labels[type]}</h3>
-    <p>AI is structuring the content and building your file…</p>
-  </div>`;
-  document.body.appendChild(overlay);
-}
-function hideGenModal() {
-  const m = document.getElementById('genModal'); if (m) m.remove();
-}
- 
-// ── CLAUDE STRUCTURED CONTENT ────────────────────────────────────
-async function getStructuredContent(responseText, format) {
-  const prompts = {
-    excel: `Convert the following response into a structured Excel-ready JSON format.
-Return ONLY valid JSON with this exact structure, no markdown, no explanation:
 {
-  "title": "spreadsheet title",
-  "sheets": [
-    {
-      "name": "Sheet name",
-      "headers": ["Col1", "Col2", "Col3"],
-      "rows": [["val1","val2","val3"], ["val4","val5","val6"]]
-    }
-  ]
-}
-Use multiple sheets if the content has distinct sections. Extract all structured data, metrics, lists, comparisons.
-Content: ${responseText}`,
- 
-    word: `Convert the following response into a structured Word document JSON format.
-Return ONLY valid JSON with this exact structure, no markdown, no explanation:
-{
-  "title": "document title",
-  "subtitle": "optional subtitle or date",
-  "sections": [
-    {
-      "heading": "Section heading",
-      "content": "paragraph text here",
-      "bullets": ["bullet 1", "bullet 2"]
-    }
+  "project_name": "inferred short project name",
+  "project_type": "inferred SAP project type",
+  "health_score": 72,
+  "health_label": "AMBER",
+  "health_headline": "one sentence overall project health summary",
+  "health_detail": "2-3 sentences explaining the key drivers of the health score",
+  "dimensions": [
+    {"name": "Schedule", "score": 65, "color": "a"},
+    {"name": "Budget", "score": 80, "color": "g"},
+    {"name": "Quality", "score": 55, "color": "r"},
+    {"name": "Team", "score": 78, "color": "g"},
+    {"name": "Client", "score": 70, "color": "a"}
   ],
-  "footer": "Westernacher Consulting | Confidential"
+  "raid": [
+    {"type": "R", "description": "risk description", "severity": "H", "owner": "Role", "mitigation": "mitigation action"},
+    {"type": "A", "description": "action description", "severity": "M", "owner": "Role", "mitigation": "due/context"},
+    {"type": "I", "description": "issue description", "severity": "H", "owner": "Role", "mitigation": "resolution approach"},
+    {"type": "D", "description": "decision description", "severity": "L", "owner": "Role", "mitigation": "context"}
+  ],
+  "milestones": [
+    {"date": "Wk 10", "title": "milestone name", "description": "brief description", "status": "done"},
+    {"date": "Wk 14", "title": "current milestone", "description": "brief description", "status": "current"},
+    {"date": "Wk 18", "title": "upcoming milestone", "description": "brief description", "status": "at-risk"},
+    {"date": "Wk 22", "title": "future milestone", "description": "brief description", "status": "upcoming"}
+  ],
+  "actions": [
+    {"text": "specific action required", "owner": "Role", "due": "Due: date/week"},
+    {"text": "specific action required", "owner": "Role", "due": "Due: date/week"},
+    {"text": "specific action required", "owner": "Role", "due": "Due: date/week"},
+    {"text": "specific action required", "owner": "Role", "due": "Due: this week"}
+  ],
+  "client_status": "Professional 3-4 sentence client-ready status paragraph. Start with overall health, cover key progress, name specific risks or issues clearly, and close with next steps. Tone: direct, factual, confident. Audience: ${audience}."
 }
-Content: ${responseText}`,
  
-    pptx: `Convert the following response into a PowerPoint presentation JSON format.
-Return ONLY valid JSON with this exact structure, no markdown, no explanation:
-{
-  "title": "presentation title",
-  "subtitle": "subtitle line",
-  "slides": [
-    {
-      "type": "title",
-      "title": "slide title",
-      "body": "optional subtitle text"
-    },
-    {
-      "type": "content",
-      "title": "slide title",
-      "bullets": ["bullet point 1", "bullet point 2", "bullet point 3"]
-    },
-    {
-      "type": "two-col",
-      "title": "slide title",
-      "left_heading": "left col",
-      "left_bullets": ["item 1", "item 2"],
-      "right_heading": "right col",
-      "right_bullets": ["item 1", "item 2"]
-    },
-    {
-      "type": "stats",
-      "title": "slide title",
-      "stats": [{"value": "40%", "label": "metric name"}, {"value": "25+", "label": "another metric"}]
-    }
-  ]
-}
-Create 4-7 slides. Use a mix of types. Make it look like a real professional presentation.
-Content: ${responseText}`
-  };
+Rules:
+Rules: health_score 0-100; GREEN≥75 AMBER 50-74 RED<50. dim color g≥70 a 45-69 r<45. 4-6 RAID items (R/A/I/D), severity H/M/L. 3-4 milestones (done/current/at-risk/upcoming). 4-5 actions. projType: ${projType||'auto-detect'}. Be specific with numbers from input. Keep descriptions short.`;
  
   const resp = await fetch('https://we-ai-regional-summit.emirduvif.workers.dev/', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       model: 'claude-sonnet-4-20250514',
-      max_tokens: 1000,
-      messages: [{ role: 'user', content: prompts[format] }]
+      max_tokens: 2500,
+      system,
+      messages: [{ role: 'user', content: `Analyse this project input:\n\n${brief}` }]
     })
   });
+  if (!resp.ok) throw new Error(`API ${resp.status}`);
   const data = await resp.json();
-  const raw = data.content[0].text.replace(/```json|```/g, '').trim();
-  return JSON.parse(raw);
+  let raw = data.content[0].text.replace(/```json|```/g, '').trim();
+  // If JSON is truncated, try to close it gracefully
+  try {
+    return JSON.parse(raw);
+  } catch(e) {
+    // Attempt to repair truncated JSON by finding last complete property
+    let repaired = raw;
+    // Remove trailing incomplete string/value
+    repaired = repaired.replace(/,\s*"[^"]*$/, '');
+    repaired = repaired.replace(/,\s*\{[^}]*$/, '');
+    // Close any open arrays and the root object
+    const opens = (repaired.match(/\[/g)||[]).length - (repaired.match(/\]/g)||[]).length;
+    const objOpens = (repaired.match(/\{/g)||[]).length - (repaired.match(/\}/g)||[]).length;
+    for(let i=0;i<opens;i++) repaired += ']';
+    for(let i=0;i<objOpens;i++) repaired += '}';
+    return JSON.parse(repaired);
+  }
 }
  
-// ── EXCEL GENERATION ─────────────────────────────────────────────
-async function generateExcel(responseText) {
-  const d = await getStructuredContent(responseText, 'excel');
-  const wb = XLSX.utils.book_new();
-  wb.Props = { Title: d.title, Author: 'Westernacher AI Desk' };
+// ── MAIN ANALYSIS ─────────────────────────────────────────────────
+async function runAnalysis() {
+  const brief = document.getElementById('briefTxt').value.trim();
+  if (!brief) { showToast('Paste some project input first'); return; }
  
-  d.sheets.forEach(sheet => {
-    const wsData = [sheet.headers, ...sheet.rows];
-    const ws = XLSX.utils.aoa_to_sheet(wsData);
-    
-    // Column widths
-    const maxCols = sheet.headers.length;
-    ws['!cols'] = sheet.headers.map((h, i) => {
-      const maxLen = Math.max(h.length, ...sheet.rows.map(r => (r[i]||'').toString().length));
-      return { wch: Math.min(maxLen + 4, 40) };
-    });
+  const btn    = document.getElementById('runBtn');
+  const label  = document.getElementById('runLabel');
  
-    // Header style - just bold (xlsx doesn't support full styling without pro)
-    sheet.headers.forEach((_, i) => {
-      const cell = XLSX.utils.encode_cell({ r: 0, c: i });
-      if (ws[cell]) ws[cell].s = { font: { bold: true } };
-    });
+  // Use CSS classes instead of outerHTML — safe on every re-run
+  setRunningState(btn, label, true);
+  showLoading();
  
-    XLSX.utils.book_append_sheet(wb, ws, sheet.name.slice(0, 31));
-  });
- 
-  XLSX.writeFile(wb, `Westernacher_${d.title.replace(/\s+/g,'_').slice(0,40)}.xlsx`);
-  showToast('Excel file downloaded ✓');
-}
- 
-// ── WORD GENERATION ──────────────────────────────────────────────
-async function generateWord(responseText) {
-  const d = await getStructuredContent(responseText, 'word');
-  
-  // Build HTML content that Word can open
-  let html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
-<style>
-  body{font-family:'Calibri',sans-serif;font-size:11pt;margin:2.5cm;color:#1a1a1a;line-height:1.5;}
-  h1{font-size:20pt;font-weight:700;color:#0A0A0A;margin-bottom:4pt;border-bottom:2px solid #93CCEA;padding-bottom:8pt;}
-  h2{font-size:13pt;font-weight:700;color:#0A0A0A;margin-top:16pt;margin-bottom:6pt;}
-  .subtitle{font-size:11pt;color:#6B6B6B;margin-bottom:20pt;}
-  p{margin-bottom:8pt;}
-  ul{margin:4pt 0 10pt 20pt;}
-  li{margin-bottom:3pt;}
-  .footer{margin-top:40pt;padding-top:8pt;border-top:1px solid #E2E2E2;font-size:9pt;color:#888;}
-  .brand-bar{background:#0A0A0A;color:#93CCEA;padding:8pt 0;font-size:9pt;letter-spacing:1px;margin-bottom:24pt;}
-</style></head><body>
-<div class="brand-bar">WESTERNACHER CONSULTING &nbsp;·&nbsp; AI DESK EXPORT</div>
-<h1>${d.title}</h1>
-${d.subtitle ? `<div class="subtitle">${d.subtitle}</div>` : ''}`;
- 
-  d.sections.forEach(sec => {
-    html += `<h2>${sec.heading}</h2>`;
-    if (sec.content) html += `<p>${sec.content}</p>`;
-    if (sec.bullets && sec.bullets.length > 0) {
-      html += '<ul>';
-      sec.bullets.forEach(b => { html += `<li>${b}</li>`; });
-      html += '</ul>';
+  try {
+    const projType = document.getElementById('projType').value;
+    const audience = document.getElementById('audience').value;
+    currentResult = await callClaude(brief, projType, audience);
+    renderResult(currentResult);
+  } catch(e) {
+    const msg = e.message || 'Unknown error';
+    // Distinguish network failure from API error
+    if (msg === 'Failed to fetch' || msg.includes('NetworkError') || msg.includes('network')) {
+      showError('Network error — check your connection and try again.');
+    } else if (msg.includes('API 4') || msg.includes('API 5')) {
+      showError('API error ' + msg.replace('API ','') + ' — please try again in a moment.');
+    } else {
+      showError(msg);
     }
-  });
+  } finally {
+    // Always re-enable — even if something threw
+    setRunningState(btn, label, false);
+  }
+}
  
-  html += `<div class="footer">${d.footer || 'Westernacher Consulting | AI Desk | Confidential'}</div>
+function setRunningState(btn, label, isRunning) {
+  btn.disabled = isRunning;
+  const iconSlot = document.getElementById('runIconSlot');
+  if (!iconSlot) return;
+  if (isRunning) {
+    iconSlot.innerHTML = '<div class="btn-spinner"></div>';
+    label.textContent  = 'Analysing…';
+  } else {
+    iconSlot.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
+    label.textContent  = currentResult ? 'Re-analyse' : 'Analyse Project Status';
+  }
+}
+ 
+// ── LOADING STATE ─────────────────────────────────────────────────
+function showLoading() {
+  const rp = document.getElementById('rightPanel');
+  rp.innerHTML = `
+    <div class="loading-state">
+      <div class="loading-headline"><div class="ls"></div> Reading project signal…</div>
+      <div class="skel" style="height:80px;animation-delay:0s"></div>
+      <div class="skel tall" style="animation-delay:0.1s"></div>
+      <div class="skel" style="height:120px;animation-delay:0.2s"></div>
+      <div class="skel short" style="animation-delay:0.3s"></div>
+      <div class="skel" style="height:100px;animation-delay:0.4s"></div>
+    </div>`;
+}
+ 
+function showError(msg) {
+  document.getElementById('rightPanel').innerHTML = `
+    <div class="empty">
+      <div class="empty-pulse">⚠️</div>
+      <h3>Analysis failed</h3>
+      <p style="color:#F87171">${msg}</p>
+    </div>`;
+}
+ 
+// ── RENDER RESULT ─────────────────────────────────────────────────
+function renderResult(d) {
+  const colorClass = d.health_label === 'GREEN' ? 'health-green' : d.health_label === 'RED' ? 'health-red' : 'health-amber';
+  const dotColor   = d.health_label === 'GREEN' ? '#4ADE80' : d.health_label === 'RED' ? '#F87171' : '#FBBF24';
+ 
+  const dimsHtml = (d.dimensions || []).map(dim => `
+    <div class="dim-row">
+      <span class="dim-name">${dim.name}</span>
+      <div class="dim-bar"><div class="dim-fill ${dim.color}" style="width:${dim.score}%"></div></div>
+    </div>`).join('');
+ 
+  const raidHtml = (d.raid || []).map(r => `
+    <tr>
+      <td><span class="raid-type rt-${r.type.toLowerCase()}">${r.type}</span></td>
+      <td>${r.description}</td>
+      <td><span class="sev-badge sev-${r.severity.toLowerCase()}">${r.severity}</span></td>
+      <td style="color:#666;font-size:11px">${r.owner || '—'}</td>
+      <td style="color:#555;font-size:11px">${r.mitigation || '—'}</td>
+    </tr>`).join('');
+ 
+  const msStatusMap = {done:'ms-done',current:'ms-cur','at-risk':'ms-risk',upcoming:'ms-up'};
+  const msLabelMap  = {done:'DONE',current:'IN PROGRESS','at-risk':'AT RISK',upcoming:'PLANNED'};
+  const msDotMap    = {done:'done',current:'current','at-risk':'at-risk',upcoming:'upcoming'};
+ 
+  const msHtml = (d.milestones || []).map(m => `
+    <div class="ms-item">
+      <div class="ms-date">${m.date}</div>
+      <div class="ms-spine">
+        <div class="ms-dot ${msDotMap[m.status] || 'upcoming'}"></div>
+        <div class="ms-line"></div>
+      </div>
+      <div class="ms-content">
+        <div class="ms-title">${m.title}</div>
+        <div class="ms-desc">${m.description}</div>
+        <span class="ms-status ${msStatusMap[m.status] || 'ms-up'}">${msLabelMap[m.status] || 'PLANNED'}</span>
+      </div>
+    </div>`).join('');
+ 
+  const actionsHtml = (d.actions || []).map((a, i) => `
+    <div class="action-item">
+      <div class="action-num">${String(i+1).padStart(2,'0')}</div>
+      <div class="action-text">${a.text}</div>
+      <div class="action-owner">${a.owner}</div>
+      <div class="action-due">${a.due}</div>
+    </div>`).join('');
+ 
+  const raidCount    = (d.raid || []).length;
+  const actionCount  = (d.actions || []).length;
+  const msCount      = (d.milestones || []).length;
+ 
+  const rp = document.getElementById('rightPanel');
+  rp.innerHTML = `
+    <!-- OUTPUT HEADER -->
+    <div class="out-header">
+      <div class="out-title-wrap">
+        <div class="out-title">${d.project_name || 'Project Status'}</div>
+        <div class="out-meta">${d.project_type || ''} · Generated by WePulse</div>
+      </div>
+      <div class="export-row">
+        <button class="exp-btn" onclick="exportWord()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Word
+        </button>
+        <button class="exp-btn" onclick="exportPPTX()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          PPTX
+        </button>
+      </div>
+    </div>
+ 
+    <!-- OUTPUT BODY -->
+    <div class="out-body">
+ 
+      <!-- HEALTH BANNER -->
+      <div class="health-banner ${colorClass}" style="animation-delay:0s">
+        <div class="health-score-block">
+          <div class="score-label">Health</div>
+          <div class="score-number">${d.health_score}</div>
+          <div class="score-tag">${d.health_label}</div>
+        </div>
+        <div class="health-summary">
+          <div class="health-headline">${d.health_headline}</div>
+          <div class="health-detail">${d.health_detail}</div>
+        </div>
+        <div class="health-dims">${dimsHtml}</div>
+      </div>
+ 
+      <!-- CLIENT STATUS PARAGRAPH -->
+      <div class="section-card" style="animation-delay:0.05s">
+        <div class="sc-header">
+          <div class="sc-dot" style="background:${dotColor}"></div>
+          <div class="sc-title">Client-Ready Status</div>
+          <div class="sc-count">Ready to send</div>
+        </div>
+        <div class="sc-body">
+          <div class="status-report">${d.client_status}</div>
+        </div>
+      </div>
+ 
+      <!-- PRIORITY ACTIONS -->
+      <div class="section-card" style="animation-delay:0.1s">
+        <div class="sc-header">
+          <div class="sc-dot" style="background:#F87171"></div>
+          <div class="sc-title">Priority Actions</div>
+          <div class="sc-count">${actionCount} actions</div>
+        </div>
+        <div class="sc-body">
+          <div class="action-list">${actionsHtml}</div>
+        </div>
+      </div>
+ 
+      <!-- RAID LOG -->
+      <div class="section-card" style="animation-delay:0.15s">
+        <div class="sc-header">
+          <div class="sc-dot" style="background:var(--blue)"></div>
+          <div class="sc-title">RAID Log</div>
+          <div class="sc-count">${raidCount} items</div>
+        </div>
+        <div class="sc-body" style="padding:0">
+          <table class="raid-table">
+            <thead>
+              <tr>
+                <th>Type</th><th>Description</th><th>Sev</th><th>Owner</th><th>Mitigation / Context</th>
+              </tr>
+            </thead>
+            <tbody>${raidHtml}</tbody>
+          </table>
+        </div>
+      </div>
+ 
+      <!-- MILESTONE TIMELINE -->
+      <div class="section-card" style="animation-delay:0.2s">
+        <div class="sc-header">
+          <div class="sc-dot" style="background:var(--lilac)"></div>
+          <div class="sc-title">Milestone Timeline</div>
+          <div class="sc-count">${msCount} milestones</div>
+        </div>
+        <div class="sc-body">
+          <div class="milestones">${msHtml}</div>
+        </div>
+      </div>
+ 
+    </div>`;
+}
+ 
+// ── EXPORT: WORD ──────────────────────────────────────────────────
+function exportWord() {
+  if (!currentResult) return;
+  const d = currentResult;
+  const color = d.health_label === 'GREEN' ? '#4ADE80' : d.health_label === 'RED' ? '#F87171' : '#FBBF24';
+ 
+  const raidRows = (d.raid || []).map(r =>
+    `<tr><td>${r.type}</td><td>${r.description}</td><td>${r.severity}</td><td>${r.owner||'—'}</td><td>${r.mitigation||'—'}</td></tr>`
+  ).join('');
+ 
+  const actions = (d.actions || []).map((a,i) =>
+    `<li><strong>${a.text}</strong> — ${a.owner} · ${a.due}</li>`
+  ).join('');
+ 
+  const milestones = (d.milestones || []).map(m =>
+    `<li><strong>${m.date} — ${m.title}</strong> (${m.status.toUpperCase()}): ${m.description}</li>`
+  ).join('');
+ 
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+<style>
+  body{font-family:Calibri,sans-serif;font-size:11pt;margin:2.5cm;color:#111;line-height:1.5}
+  h1{font-size:22pt;font-weight:700;color:#0A0A0A;margin-bottom:4pt}
+  h2{font-size:13pt;font-weight:700;color:#0A0A0A;margin-top:18pt;margin-bottom:6pt;border-bottom:1px solid #E0E0E0;padding-bottom:4pt}
+  .score-badge{display:inline-block;padding:4pt 12pt;font-size:14pt;font-weight:700;border-radius:4pt;color:${color};border:2pt solid ${color};margin-bottom:12pt}
+  .detail{font-size:10pt;color:#666;margin-bottom:16pt}
+  table{width:100%;border-collapse:collapse;font-size:10pt;margin-top:6pt}
+  th{background:#F4F4F4;padding:5pt 8pt;text-align:left;font-weight:600;border-bottom:1pt solid #DDD}
+  td{padding:5pt 8pt;border-bottom:1pt solid #F0F0F0;vertical-align:top}
+  ul{margin:6pt 0;padding-left:18pt}
+  li{margin-bottom:4pt}
+  .status-box{background:#F9F9F9;padding:12pt;border-left:3pt solid #93CCEA;margin:10pt 0;font-size:11pt;line-height:1.6}
+  .footer{margin-top:40pt;padding-top:8pt;border-top:1pt solid #E0E0E0;font-size:9pt;color:#888}
+  .brand{background:#0A0A0A;color:#93CCEA;padding:6pt 0;font-size:9pt;letter-spacing:1pt;margin-bottom:22pt;text-align:center}
+</style></head><body>
+<div class="brand">WESTERNACHER CONSULTING · WEPULSE · PROJECT DELIVERY INTELLIGENCE</div>
+<h1>${d.project_name}</h1>
+<div class="score-badge">${d.health_score} / 100 — ${d.health_label}</div>
+<div class="detail">${d.health_headline}<br>${d.health_detail}</div>
+ 
+<h2>Client Status</h2>
+<div class="status-box">${d.client_status}</div>
+ 
+<h2>Priority Actions</h2>
+<ul>${actions}</ul>
+ 
+<h2>RAID Log</h2>
+<table><thead><tr><th>Type</th><th>Description</th><th>Severity</th><th>Owner</th><th>Mitigation</th></tr></thead>
+<tbody>${raidRows}</tbody></table>
+ 
+<h2>Milestone Timeline</h2>
+<ul>${milestones}</ul>
+ 
+<div class="footer">Generated by WePulse · Westernacher Consulting · ${new Date().toLocaleDateString()}</div>
  
  
 </body></html>`;
  
-  const blob = new Blob([html], { type: 'application/msword;charset=utf-8' });
-  saveAs(blob, `Westernacher_${d.title.replace(/\s+/g,'_').slice(0,40)}.doc`);
+  const blob = new Blob([html], {type:'application/msword;charset=utf-8'});
+  saveAs(blob, `WePulse_${d.project_name.replace(/\s+/g,'_')}.doc`);
   showToast('Word document downloaded ✓');
 }
  
-// ── PPTX GENERATION ──────────────────────────────────────────────
-async function generatePPTX(responseText) {
-  const d = await getStructuredContent(responseText, 'pptx');
+// ── EXPORT: PPTX ──────────────────────────────────────────────────
+async function exportPPTX() {
+  if (!currentResult) return;
+  const d = currentResult;
+ 
+  const BLACK='0A0A0A', WHITE='FFFFFF', BLUE='93CCEA', LILAC='CECAE5';
+  const scoreColor = d.health_label==='GREEN' ? '4ADE80' : d.health_label==='RED' ? 'F87171' : 'FBBF24';
+  const scoreBg    = d.health_label==='GREEN' ? '0D2A1A' : d.health_label==='RED' ? '2A0D0D' : '2A1E00';
  
   const pres = new PptxGenJS();
   pres.layout = 'LAYOUT_16x9';
-  pres.title = d.title;
+  pres.title = `WePulse — ${d.project_name}`;
  
-  // Brand colors
-  const BLACK = '0A0A0A', WHITE = 'FFFFFF', BLUE = '93CCEA', LILAC = 'CECAE5', DARK = '141414';
+  function addLogo(s) {
+    s.addText('Westernacher', {x:0.3,y:0.18,w:1.8,h:0.22,fontSize:11,bold:true,color:WHITE,fontFace:'Calibri'});
+    s.addShape(pres.shapes.LINE, {x:0.3,y:0.48,w:0.7,h:0,line:{color:BLUE,width:1.5}});
+  }
+  const mk = () => ({type:'outer',blur:6,offset:2,angle:135,color:'000000',opacity:0.12});
  
-  // Westernacher logo path data (simplified text treatment for PPTX)
-  const addLogo = (slide, dark=false) => {
-    slide.addText('Westernacher', {
-      x:0.35, y:0.18, w:2, h:0.25,
-      fontSize:11, bold:true, color: dark ? WHITE : BLACK, fontFace:'Calibri'
-    });
-    slide.addShape(pres.shapes.LINE, {
-      x:0.35, y:0.52, w:0.8, h:0,
-      line:{ color: BLUE, width:1.5 }
-    });
-  };
- 
-  d.slides.forEach((slide, idx) => {
+  // ── SLIDE 1: Health Dashboard ──
+  {
     const s = pres.addSlide();
+    s.background = {color:BLACK};
+    addLogo(s);
  
-    if (slide.type === 'title' || idx === 0) {
-      // Title slide — dark background
-      s.background = { color: BLACK };
-      addLogo(s, true);
+    // Title area
+    s.addText('WePulse', {x:0.3,y:0.65,w:4,h:0.35,fontSize:11,color:BLUE,fontFace:'Calibri',bold:true,charSpacing:1});
+    s.addText([{text:d.project_name,options:{color:WHITE}},{text:'.',options:{color:BLUE}}],
+      {x:0.3,y:1.0,w:6,h:0.8,fontSize:34,bold:true,fontFace:'Calibri',margin:0});
  
-      // Big title
-      s.addText(slide.title, {
-        x:0.5, y:1.2, w:9, h:1.8,
-        fontSize:44, bold:true, color:WHITE, fontFace:'Calibri'
-      });
-      // Blue dot
-      s.addText('.', { x:0.5+slide.title.length*0.31, y:1.2, w:0.5, h:1.8, fontSize:44, bold:true, color:BLUE, fontFace:'Calibri' });
-      if (slide.body) s.addText(slide.body, {
-        x:0.5, y:3.1, w:9, h:0.6, fontSize:16, color:'888888', fontFace:'Calibri', italic:true
-      });
-      // Footer line
-      s.addShape(pres.shapes.LINE, { x:0, y:5.38, w:10, h:0, line:{ color:BLUE, width:2 } });
-      s.addText('Westernacher Consulting', { x:0, y:5.2, w:10, h:0.3, fontSize:10, color:'555555', align:'center', fontFace:'Calibri' });
+    // Health score block
+    s.addShape(pres.shapes.RECTANGLE, {x:6.6,y:0.65,w:3.05,h:3.05,fill:{color:scoreBg},shadow:mk()});
+    s.addShape(pres.shapes.RECTANGLE, {x:6.6,y:0.65,w:3.05,h:0.04,fill:{color:scoreColor}});
+    s.addText('HEALTH SCORE', {x:6.75,y:0.82,w:2.7,h:0.3,fontSize:9,color:scoreColor,align:'center',bold:true,charSpacing:2,fontFace:'Calibri'});
+    s.addText(String(d.health_score), {x:6.75,y:1.15,w:2.7,h:1.4,fontSize:72,bold:true,color:scoreColor,align:'center',fontFace:'Calibri',margin:0});
+    s.addShape(pres.shapes.RECTANGLE, {x:7.2,y:2.65,w:1.7,h:0.32,fill:{color:scoreColor+'22'}});
+    s.addText(d.health_label, {x:7.2,y:2.65,w:1.7,h:0.32,fontSize:12,bold:true,color:scoreColor,align:'center',valign:'middle',fontFace:'Calibri',margin:0});
  
-    } else if (slide.type === 'stats') {
-      s.background = { color: BLACK };
-      addLogo(s, true);
-      s.addShape(pres.shapes.LINE, { x:0.35, y:0.62, w:0.8, h:0, line:{ color:BLUE, width:1.5 } });
-      s.addText(slide.title, { x:0.35, y:0.75, w:9.3, h:0.65, fontSize:26, bold:true, color:WHITE, fontFace:'Calibri' });
+    // Summary
+    s.addText(d.health_headline, {x:0.3,y:1.95,w:6.0,h:0.45,fontSize:14,color:WHITE,fontFace:'Calibri',margin:0});
+    s.addText(d.health_detail, {x:0.3,y:2.48,w:6.0,h:0.75,fontSize:11.5,color:'888888',fontFace:'Calibri',margin:0});
  
-      const stats = slide.stats || [];
-      const cols = Math.min(stats.length, 4);
-      const w = 9.3 / cols;
-      stats.slice(0, 4).forEach((stat, i) => {
-        const x = 0.35 + i * w;
-        s.addShape(pres.shapes.RECTANGLE, { x, y:1.7, w:w-0.15, h:2.6, fill:{ color:'141414' } });
-        s.addShape(pres.shapes.RECTANGLE, { x, y:1.7, w:w-0.15, h:0.04, fill:{ color:BLUE } });
-        s.addText(stat.value, { x:x+0.15, y:2.0, w:w-0.4, h:1.2, fontSize:38, bold:true, color:WHITE, fontFace:'Calibri' });
-        s.addText(stat.label, { x:x+0.15, y:3.2, w:w-0.4, h:0.8, fontSize:12, color:'888888', fontFace:'Calibri' });
-      });
+    // Dimension bars
+    const dims = d.dimensions || [];
+    const barColors = {g:'4ADE80',a:'FBBF24',r:'F87171'};
+    dims.slice(0,5).forEach((dim,i) => {
+      const y = 3.5 + i*0.38;
+      s.addText(dim.name, {x:0.3,y,w:1.1,h:0.35,fontSize:10,color:'666666',fontFace:'Calibri',margin:0});
+      s.addShape(pres.shapes.RECTANGLE, {x:1.5,y:y+0.08,w:5.0,h:0.18,fill:{color:'1A1A1A'}});
+      s.addShape(pres.shapes.RECTANGLE, {x:1.5,y:y+0.08,w:5.0*(dim.score/100),h:0.18,fill:{color:barColors[dim.color]||'93CCEA'}});
+      s.addText(String(dim.score)+'%', {x:6.6,y,w:0.6,h:0.35,fontSize:10,color:barColors[dim.color]||'93CCEA',align:'right',fontFace:'Calibri',margin:0});
+    });
+  }
  
-    } else if (slide.type === 'two-col') {
-      s.background = { color: WHITE };
-      addLogo(s, false);
-      s.addShape(pres.shapes.LINE, { x:0.35, y:0.62, w:0.8, h:0, line:{ color:BLUE, width:1.5 } });
-      s.addText(slide.title, { x:0.35, y:0.75, w:9.3, h:0.65, fontSize:26, bold:true, color:BLACK, fontFace:'Calibri' });
+  // ── SLIDE 2: Client Status + Priority Actions ──
+  {
+    const s = pres.addSlide();
+    s.background = {color:BLACK};
+    addLogo(s);
+    s.addShape(pres.shapes.LINE, {x:0.3,y:0.55,w:0.7,h:0,line:{color:BLUE,width:1.5}});
  
-      ['left','right'].forEach((side, i) => {
-        const x = 0.35 + i * 4.8;
-        const heading = slide[`${side}_heading`] || '';
-        const bullets = slide[`${side}_bullets`] || [];
-        s.addShape(pres.shapes.RECTANGLE, { x, y:1.6, w:4.5, h:3.6, fill:{ color: i===0 ? BLACK : 'F4F4F4' } });
-        s.addShape(pres.shapes.RECTANGLE, { x, y:1.6, w:4.5, h:0.04, fill:{ color:BLUE } });
-        s.addText(heading, { x:x+0.2, y:1.75, w:4.1, h:0.5, fontSize:14, bold:true, color: i===0 ? WHITE : BLACK, fontFace:'Calibri' });
-        bullets.forEach((b, j) => {
-          s.addText([{text:'— ', options:{color:BLUE,bold:true}},{text:b,options:{color: i===0 ? 'BBBBBB' : '555555'}}], {
-            x:x+0.2, y:2.35+j*0.45, w:4.1, h:0.42, fontSize:11.5, fontFace:'Calibri'
-          });
-        });
-      });
+    s.addText([{text:'Client Status',options:{color:WHITE}},{text:'.',options:{color:BLUE}}],
+      {x:0.3,y:0.65,w:9.4,h:0.55,fontSize:24,bold:true,fontFace:'Calibri',margin:0});
  
-    } else {
-      // Default content slide
-      s.background = { color: WHITE };
-      addLogo(s, false);
-      s.addShape(pres.shapes.LINE, { x:0.35, y:0.62, w:0.8, h:0, line:{ color:BLUE, width:1.5 } });
-      s.addText(slide.title, { x:0.35, y:0.75, w:9.3, h:0.65, fontSize:26, bold:true, color:BLACK, fontFace:'Calibri' });
+    // Status paragraph box
+    s.addShape(pres.shapes.RECTANGLE, {x:0.3,y:1.3,w:9.4,h:1.45,fill:{color:'0D0D0D'},shadow:mk()});
+    s.addShape(pres.shapes.RECTANGLE, {x:0.3,y:1.3,w:0.06,h:1.45,fill:{color:BLUE}});
+    s.addText(d.client_status, {x:0.52,y:1.38,w:9.0,h:1.3,fontSize:11.5,color:'BBBBBB',fontFace:'Calibri',margin:0});
  
-      const bullets = slide.bullets || [];
-      bullets.forEach((b, i) => {
-        const isFirst = i === 0;
-        s.addShape(pres.shapes.RECTANGLE, {
-          x:0.35, y:1.65+i*0.62, w:9.3, h:0.55,
-          fill:{ color: i%2===0 ? 'F9F9F9' : WHITE }
-        });
-        s.addShape(pres.shapes.RECTANGLE, { x:0.35, y:1.65+i*0.62, w:0.04, h:0.55, fill:{ color:BLUE } });
-        s.addText(b, { x:0.55, y:1.68+i*0.62, w:9.0, h:0.5, fontSize:12.5, color:'333333', fontFace:'Calibri', valign:'middle' });
-      });
-    }
-  });
+    // Actions
+    s.addText('Priority Actions', {x:0.3,y:2.95,w:4,h:0.32,fontSize:13,bold:true,color:WHITE,fontFace:'Calibri',margin:0});
+    (d.actions||[]).slice(0,5).forEach((a,i) => {
+      const y = 3.35 + i*0.43;
+      s.addShape(pres.shapes.RECTANGLE, {x:0.3,y,w:9.4,h:0.38,fill:{color:i%2===0?'0D0D0D':'111111'}});
+      s.addShape(pres.shapes.RECTANGLE, {x:0.3,y,w:0.04,h:0.38,fill:{color:'F87171'}});
+      s.addText(`${String(i+1).padStart(2,'0')}  ${a.text}`, {x:0.45,y:y+0.04,w:6.5,h:0.3,fontSize:11,color:'BBBBBB',fontFace:'Calibri',margin:0});
+      s.addText(a.owner, {x:7.1,y:y+0.04,w:1.3,h:0.3,fontSize:10,color:'555555',align:'right',fontFace:'Calibri',margin:0});
+      s.addText(a.due, {x:8.5,y:y+0.04,w:1.2,h:0.3,fontSize:10,color:BLUE,align:'right',fontFace:'Calibri',margin:0});
+    });
+  }
  
-  pres.writeFile({ fileName: `Westernacher_${d.title.replace(/\s+/g,'_').slice(0,40)}.pptx` });
-  showToast('PowerPoint file downloaded ✓');
+  // ── SLIDE 3: RAID Log ──
+  {
+    const s = pres.addSlide();
+    s.background = {color:BLACK};
+    addLogo(s);
+    s.addShape(pres.shapes.LINE, {x:0.3,y:0.55,w:0.7,h:0,line:{color:BLUE,width:1.5}});
+    s.addText([{text:'RAID Log',options:{color:WHITE}},{text:'.',options:{color:BLUE}}],
+      {x:0.3,y:0.65,w:9.4,h:0.55,fontSize:24,bold:true,fontFace:'Calibri',margin:0});
+ 
+    const typeColors = {R:'F87171',A:'93CCEA',I:'FBBF24',D:'4ADE80'};
+    const sevColors  = {H:'F87171',M:'FBBF24',L:'4ADE80'};
+ 
+    // Header row
+    s.addShape(pres.shapes.RECTANGLE, {x:0.3,y:1.35,w:9.4,h:0.28,fill:{color:'1A1A1A'}});
+    ['Type','Description','Sev','Owner','Mitigation / Context'].forEach((h,i) => {
+      const xs=[0.35,0.85,6.0,6.8,7.7];const ws=[0.4,5.1,0.7,0.85,1.9];
+      s.addText(h, {x:xs[i],y:1.38,w:ws[i],h:0.22,fontSize:9,color:'555555',fontFace:'Calibri',bold:true,margin:0});
+    });
+ 
+    (d.raid||[]).slice(0,8).forEach((r,i) => {
+      const y = 1.68 + i*0.43;
+      s.addShape(pres.shapes.RECTANGLE, {x:0.3,y,w:9.4,h:0.38,fill:{color:i%2===0?'0D0D0D':'111111'}});
+      s.addShape(pres.shapes.RECTANGLE, {x:0.3,y,w:0.04,h:0.38,fill:{color:typeColors[r.type]||BLUE}});
+      // Type badge
+      s.addShape(pres.shapes.RECTANGLE, {x:0.4,y:y+0.06,w:0.3,h:0.26,fill:{color:(typeColors[r.type]||BLUE)+'22'}});
+      s.addText(r.type, {x:0.4,y:y+0.06,w:0.3,h:0.26,fontSize:9.5,bold:true,color:typeColors[r.type]||BLUE,align:'center',valign:'middle',fontFace:'Calibri',margin:0});
+      s.addText(r.description, {x:0.78,y:y+0.05,w:5.15,h:0.3,fontSize:10.5,color:'AAAAAA',fontFace:'Calibri',margin:0});
+      // Severity
+      s.addShape(pres.shapes.RECTANGLE, {x:6.05,y:y+0.07,w:0.28,h:0.24,fill:{color:(sevColors[r.severity]||BLUE)+'22'}});
+      s.addText(r.severity, {x:6.05,y:y+0.07,w:0.28,h:0.24,fontSize:9,bold:true,color:sevColors[r.severity]||BLUE,align:'center',valign:'middle',fontFace:'Calibri',margin:0});
+      s.addText(r.owner||'—', {x:6.82,y:y+0.05,w:0.85,h:0.3,fontSize:9.5,color:'555555',fontFace:'Calibri',margin:0});
+      s.addText(r.mitigation||'—', {x:7.72,y:y+0.05,w:1.85,h:0.3,fontSize:9.5,color:'666666',fontFace:'Calibri',margin:0});
+    });
+  }
+ 
+  // ── SLIDE 4: Milestones ──
+  {
+    const s = pres.addSlide();
+    s.background = {color:BLACK};
+    addLogo(s);
+    s.addShape(pres.shapes.LINE, {x:0.3,y:0.55,w:0.7,h:0,line:{color:BLUE,width:1.5}});
+    s.addText([{text:'Milestone Timeline',options:{color:WHITE}},{text:'.',options:{color:BLUE}}],
+      {x:0.3,y:0.65,w:9.4,h:0.55,fontSize:24,bold:true,fontFace:'Calibri',margin:0});
+ 
+    const msColors = {done:'4ADE80',current:'93CCEA','at-risk':'FBBF24',upcoming:'333333'};
+    const msLabel  = {done:'DONE',current:'IN PROGRESS','at-risk':'AT RISK',upcoming:'PLANNED'};
+ 
+    (d.milestones||[]).slice(0,6).forEach((m,i) => {
+      const col = i % 3;
+      const row = Math.floor(i / 3);
+      const x = 0.3 + col * 3.25;
+      const y = 1.45 + row * 2.1;
+      const mc = msColors[m.status] || '333333';
+      s.addShape(pres.shapes.RECTANGLE, {x,y,w:3.05,h:1.85,fill:{color:'0D0D0D'},shadow:mk()});
+      s.addShape(pres.shapes.RECTANGLE, {x,y,w:3.05,h:0.04,fill:{color:mc}});
+      s.addText(m.date, {x:x+0.15,y:y+0.12,w:0.8,h:0.28,fontSize:10,color:mc,fontFace:'Calibri',bold:true,margin:0});
+      s.addShape(pres.shapes.RECTANGLE, {x:x+1.0,y:y+0.12,w:1.9,h:0.26,fill:{color:mc+'22'}});
+      s.addText(msLabel[m.status]||'PLANNED', {x:x+1.0,y:y+0.12,w:1.9,h:0.26,fontSize:8.5,bold:true,color:mc,align:'center',valign:'middle',fontFace:'Calibri',margin:0});
+      s.addText(m.title, {x:x+0.15,y:y+0.5,w:2.75,h:0.42,fontSize:13,bold:true,color:WHITE,fontFace:'Calibri',margin:0});
+      s.addText(m.description, {x:x+0.15,y:y+0.97,w:2.75,h:0.7,fontSize:10.5,color:'666666',fontFace:'Calibri',margin:0});
+    });
+  }
+ 
+  pres.writeFile({fileName:`WePulse_${d.project_name.replace(/\s+/g,'_')}.pptx`});
+  showToast('PowerPoint downloaded ✓');
+}
+ 
+// ── TOAST ─────────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
 }
 </script>
  
