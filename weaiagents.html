@@ -2,7 +2,723 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Agent Scrum — Phoenix Project</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0F1117;
+  --panel: #161A24;
+  --panel2: #1C2030;
+  --border: #252A3A;
+  --blue: #4A9EEB;
+  --blue-glow: rgba(74,158,235,0.15);
+  --green: #3DD68C;
+  --amber: #F5A623;
+  --red: #F25C5C;
+  --purple: #9B7FE8;
+  --text: #E8EDF5;
+  --text2: #8899B0;
+  --text3: #50607A;
+  --table: #1A2035;
+  --table-edge: #2A3555;
+  --floor: #0D1019;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html,body { height:100%; overflow:hidden; background:var(--bg); }
+body { font-family:'Space Grotesk',sans-serif; color:var(--text); display:flex; flex-direction:column; }
+
+/* ── HEADER ── */
+header {
+  height:52px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 2rem;
+  background:rgba(15,17,23,0.95);
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(10px);
+}
+.logo { display:flex; align-items:center; gap:12px; }
+.logo svg { width:110px; height:11px; }
+.logo-div { width:1px; height:16px; background:var(--border); }
+.page-title { font-size:13px; font-weight:600; color:var(--text); }
+.page-sub { font-size:10px; color:var(--text3); font-family:'JetBrains Mono',monospace; }
+.status-row { display:flex; align-items:center; gap:10px; }
+.badge {
+  font-size:10px; font-weight:700; padding:4px 12px; border-radius:20px;
+  font-family:'JetBrains Mono',monospace; letter-spacing:0.5px;
+  border:1px solid; text-transform:uppercase;
+}
+.badge-idle { color:var(--text3); border-color:var(--border); background:transparent; }
+.badge-live { color:var(--green); border-color:rgba(61,214,140,0.4); background:rgba(61,214,140,0.08); animation:glow-badge 2s infinite; }
+.badge-done { color:var(--blue); border-color:rgba(74,158,235,0.4); background:rgba(74,158,235,0.08); }
+@keyframes glow-badge { 0%,100%{box-shadow:none} 50%{box-shadow:0 0 8px rgba(61,214,140,0.3)} }
+
+/* ── MAIN LAYOUT ── */
+.app { flex:1; display:grid; grid-template-columns:1fr 340px; overflow:hidden; }
+
+/* ── MEETING ROOM (left) ── */
+.room-wrap {
+  position:relative; overflow:hidden; display:flex; flex-direction:column;
+  background: radial-gradient(ellipse at 50% 40%, #12172A 0%, var(--floor) 70%);
+}
+
+/* Room ambience */
+.room-wrap::before {
+  content:'';
+  position:absolute; inset:0;
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(255,255,255,0.015) 40px, rgba(255,255,255,0.015) 41px),
+    repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(255,255,255,0.015) 40px, rgba(255,255,255,0.015) 41px);
+  pointer-events:none;
+}
+
+/* Ceiling light glow */
+.ceiling-light {
+  position:absolute; top:-60px; left:50%; transform:translateX(-50%);
+  width:300px; height:200px;
+  background:radial-gradient(ellipse, rgba(74,158,235,0.12) 0%, transparent 70%);
+  pointer-events:none;
+}
+
+/* CONFERENCE TABLE */
+.table-scene {
+  position:absolute;
+  bottom:0; left:50%; transform:translateX(-50%);
+  width:600px; height:320px;
+}
+
+.table {
+  position:absolute;
+  bottom:60px; left:50%; transform:translateX(-50%);
+  width:480px; height:180px;
+}
+
+/* Table surface - isometric-ish perspective */
+.table-top {
+  position:absolute;
+  bottom:20px; left:0; right:0; height:160px;
+  background:linear-gradient(160deg, #1E2840 0%, #141C2E 50%, #0F1520 100%);
+  border-radius:16px;
+  border:1px solid var(--table-edge);
+  box-shadow:
+    0 0 0 1px rgba(74,158,235,0.08),
+    0 20px 60px rgba(0,0,0,0.8),
+    inset 0 1px 0 rgba(255,255,255,0.06);
+}
+.table-top::after {
+  content:'';
+  position:absolute; inset:8px;
+  border-radius:10px;
+  background:linear-gradient(135deg, rgba(74,158,235,0.04) 0%, transparent 50%);
+  border:1px solid rgba(74,158,235,0.06);
+}
+
+/* Table reflection/sheen */
+.table-sheen {
+  position:absolute;
+  top:10px; left:20px; right:20px; height:30px;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+  border-radius:50%;
+}
+
+/* Table leg shadow */
+.table-shadow {
+  position:absolute;
+  bottom:0; left:40px; right:40px; height:18px;
+  background:radial-gradient(ellipse, rgba(0,0,0,0.8), transparent 70%);
+  border-radius:50%;
+}
+
+/* Laptop icons on table */
+.table-item {
+  position:absolute;
+  font-size:16px; opacity:0.5;
+}
+
+/* Floor */
+.floor {
+  position:absolute; bottom:0; left:0; right:0; height:70px;
+  background:linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.4) 100%);
+}
+
+/* ── SEAT POSITIONS around the table ── */
+.seat { position:absolute; display:flex; flex-direction:column; align-items:center; }
+
+/* 5 seats: top-left, top-right, left, right, bottom-center */
+.seat-0 { top:-55px; left:60px; }   /* top-left */
+.seat-1 { top:-55px; right:60px; }  /* top-right */
+.seat-2 { top:30px; left:-30px; }   /* left middle */
+.seat-3 { top:30px; right:-30px; }  /* right middle */
+.seat-4 { bottom:-55px; left:50%; transform:translateX(-50%); } /* bottom-center (facing camera) */
+
+/* ── AGENT AVATAR ── */
+.agent {
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+  transition:transform 0.3s ease;
+  cursor:default;
+}
+
+.avatar-ring {
+  position:relative;
+  width:48px; height:48px;
+  border-radius:14px;
+  display:flex; align-items:center; justify-content:center;
+  transition:all 0.4s ease;
+  border:2px solid transparent;
+}
+.avatar-ring.speaking {
+  border-color:var(--green);
+  box-shadow:0 0 0 3px rgba(61,214,140,0.2), 0 0 20px rgba(61,214,140,0.3);
+  animation:speaker-pulse 1.5s infinite;
+}
+.avatar-ring.thinking {
+  border-color:var(--amber);
+  box-shadow:0 0 0 3px rgba(245,166,35,0.15);
+  animation:think-pulse 0.8s infinite;
+}
+@keyframes speaker-pulse { 0%,100%{box-shadow:0 0 0 3px rgba(61,214,140,0.2),0 0 20px rgba(61,214,140,0.3)} 50%{box-shadow:0 0 0 6px rgba(61,214,140,0.1),0 0 30px rgba(61,214,140,0.4)} }
+@keyframes think-pulse { 0%,100%{opacity:1} 50%{opacity:0.7} }
+
+.avatar-emoji { font-size:22px; line-height:1; }
+
+.agent-label {
+  text-align:center;
+  max-width:80px;
+}
+.agent-name { font-size:9px; font-weight:700; color:var(--text); white-space:nowrap; }
+.agent-role { font-size:8px; color:var(--text3); white-space:nowrap; font-family:'JetBrains Mono',monospace; }
+
+/* ── SPEECH BUBBLE ── */
+.bubble-wrap {
+  position:absolute;
+  pointer-events:none;
+  z-index:50;
+  opacity:0;
+  transform:scale(0.8) translateY(4px);
+  transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  width:180px;
+}
+.bubble-wrap.visible {
+  opacity:1;
+  transform:scale(1) translateY(0);
+}
+
+.speech-bubble {
+  background:var(--panel2);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:10px 12px;
+  font-size:11px;
+  line-height:1.5;
+  color:var(--text);
+  box-shadow:0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.03);
+  position:relative;
+  max-height:120px;
+  overflow:hidden;
+}
+.speech-bubble::before {
+  content:'';
+  position:absolute;
+  width:8px; height:8px;
+  background:var(--panel2);
+  border:1px solid var(--border);
+}
+/* Bubble tail directions */
+.bubble-down::before { bottom:-5px; left:50%; transform:translateX(-50%) rotate(45deg); border-top:none; border-left:none; }
+.bubble-up::before { top:-5px; left:50%; transform:translateX(-50%) rotate(225deg); border-top:none; border-left:none; }
+.bubble-right::before { right:-5px; top:50%; transform:translateY(-50%) rotate(315deg); border-top:none; border-left:none; }
+.bubble-left::before { left:-5px; top:50%; transform:translateY(-50%) rotate(135deg); border-top:none; border-left:none; }
+
+.bubble-role { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px; font-family:'JetBrains Mono',monospace; }
+.bubble-text { color:var(--text); }
+
+/* Typing dots in bubble */
+.bubble-typing {
+  display:flex; align-items:center; gap:4px; padding:4px 0;
+}
+.bubble-typing span {
+  width:5px; height:5px; background:var(--blue); border-radius:50%;
+  animation:btd 1.2s infinite; opacity:0.4;
+}
+.bubble-typing span:nth-child(2){animation-delay:0.2s;}
+.bubble-typing span:nth-child(3){animation-delay:0.4s;}
+@keyframes btd { 0%,80%,100%{transform:translateY(0);opacity:0.4} 40%{transform:translateY(-4px);opacity:1} }
+
+/* ── WALK-IN ANIMATION ── */
+@keyframes walk-in-0 { from{opacity:0;transform:translateY(-30px) scale(0.7)} to{opacity:1;transform:translateY(0) scale(1)} }
+@keyframes walk-in-1 { from{opacity:0;transform:translateY(-30px) scale(0.7)} to{opacity:1;transform:translateY(0) scale(1)} }
+@keyframes walk-in-2 { from{opacity:0;transform:translateX(-30px) scale(0.7)} to{opacity:1;transform:translateX(0) scale(1)} }
+@keyframes walk-in-3 { from{opacity:0;transform:translateX(30px) scale(0.7)} to{opacity:1;transform:translateX(0) scale(1)} }
+@keyframes walk-in-4 { from{opacity:0;transform:translateY(30px) scale(0.7)} to{opacity:1;transform:translateY(0) scale(1)} }
+
+.agent.entered-0 { animation:walk-in-0 0.5s cubic-bezier(0.34,1.56,0.64,1) both; }
+.agent.entered-1 { animation:walk-in-1 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.15s both; }
+.agent.entered-2 { animation:walk-in-2 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.3s both; }
+.agent.entered-3 { animation:walk-in-3 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.45s both; }
+.agent.entered-4 { animation:walk-in-4 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.6s both; }
+
+/* Room label */
+.room-label {
+  position:absolute; top:16px; left:50%; transform:translateX(-50%);
+  font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase;
+  color:var(--text3); font-family:'JetBrains Mono',monospace;
+  background:var(--panel); border:1px solid var(--border); border-radius:20px;
+  padding:4px 14px;
+}
+
+/* Sprint status bar */
+.sprint-bar {
+  position:absolute; bottom:0; left:0; right:0;
+  background:rgba(15,17,23,0.9); border-top:1px solid var(--border);
+  padding:8px 20px;
+  display:flex; align-items:center; gap:20px;
+  backdrop-filter:blur(10px);
+}
+.sprint-item { display:flex; align-items:center; gap:6px; font-size:10px; }
+.sprint-dot { width:6px; height:6px; border-radius:50%; }
+.sprint-val { font-family:'JetBrains Mono',monospace; font-weight:600; color:var(--text); }
+.sprint-key { color:var(--text3); }
+
+/* ── RIGHT PANEL (transcript) ── */
+.transcript-panel {
+  border-left:1px solid var(--border);
+  background:var(--panel);
+  display:flex; flex-direction:column;
+  overflow:hidden;
+}
+
+.tp-header {
+  padding:1rem 1.2rem 0.8rem;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.tp-title { font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--blue); font-family:'JetBrains Mono',monospace; margin-bottom:2px; }
+.tp-sub { font-size:11px; color:var(--text3); }
+
+.tp-feed {
+  flex:1; overflow-y:auto; padding:1rem 1.2rem;
+  display:flex; flex-direction:column; gap:10px;
+}
+.tp-feed::-webkit-scrollbar { width:4px; }
+.tp-feed::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+
+.tp-empty {
+  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  color:var(--text3); text-align:center; gap:8px; padding:2rem;
+}
+.tp-empty-icon { font-size:32px; opacity:0.4; }
+.tp-empty-text { font-size:12px; line-height:1.5; }
+
+.tp-message {
+  display:flex; flex-direction:column; gap:4px;
+  animation:tp-in 0.35s ease both;
+}
+@keyframes tp-in { from{opacity:0;transform:translateX(8px)} to{opacity:1;transform:translateX(0)} }
+.tp-msg-header { display:flex; align-items:center; gap:6px; }
+.tp-avatar { width:20px; height:20px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:11px; flex-shrink:0; }
+.tp-name { font-size:11px; font-weight:700; }
+.tp-role-tag { font-size:9px; padding:1px 6px; border-radius:3px; font-weight:700; text-transform:uppercase; letter-spacing:0.3px; font-family:'JetBrains Mono',monospace; }
+.tp-time { font-size:9px; color:var(--text3); margin-left:auto; font-family:'JetBrains Mono',monospace; }
+.tp-text { font-size:11.5px; color:#C8D4E0; line-height:1.6; padding-left:26px; }
+.tp-text strong { color:var(--blue); font-weight:600; }
+
+.tp-divider { display:flex; align-items:center; gap:8px; margin:4px 0; }
+.tp-div-line { flex:1; height:1px; background:var(--border); }
+.tp-div-label { font-size:9px; font-weight:700; color:var(--blue); text-transform:uppercase; letter-spacing:1px; font-family:'JetBrains Mono',monospace; padding:2px 8px; background:rgba(74,158,235,0.08); border:1px solid rgba(74,158,235,0.2); border-radius:10px; }
+
+/* ── CONTROLS BOTTOM ── */
+.controls-bar {
+  padding:0.8rem 1.2rem;
+  border-top:1px solid var(--border);
+  background:var(--panel);
+  flex-shrink:0;
+  display:flex; flex-direction:column; gap:8px;
+}
+.ctrl-rounds { display:flex; gap:6px; margin-bottom:2px; }
+.round-pip { flex:1; height:4px; border-radius:2px; background:var(--border); transition:background 0.4s; }
+.round-pip.done { background:var(--green); }
+.round-pip.active { background:var(--blue); animation:pip-pulse 1s infinite; }
+@keyframes pip-pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+.start-btn {
+  width:100%; padding:11px; border:none; border-radius:8px;
+  font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:700;
+  cursor:pointer; transition:all 0.2s;
+  background:linear-gradient(135deg, #1A5F8A, #2A7FBA);
+  color:#FFFFFF;
+  box-shadow:0 4px 16px rgba(26,95,138,0.3);
+}
+.start-btn:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(26,95,138,0.5); }
+.start-btn:active { transform:translateY(0); }
+.start-btn:disabled { background:var(--panel2); color:var(--text3); cursor:not-allowed; transform:none; box-shadow:none; }
+.reset-btn {
+  width:100%; padding:8px; border:1px solid var(--border);
+  border-radius:8px; font-family:'Space Grotesk',sans-serif; font-size:12px; font-weight:600;
+  cursor:pointer; background:transparent; color:var(--text3); transition:all 0.15s;
+}
+.reset-btn:hover { border-color:var(--blue); color:var(--blue); }
+
+/* Round label */
+.round-label { font-size:9px; color:var(--text3); font-family:'JetBrains Mono',monospace; text-align:center; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <svg viewBox="0 0 1000 103.74" fill="#4A9EEB">
+      <path d="M34.07,101.77L0,0h22.54l20.72,68.45L66.64,0H79.7l23.8,68.45L123.95,0h22.54l-33.95,101.77H95.14L73.31,35.13l-21.83,66.64H34.07z"/>
+      <path d="M217.12,71.06h-56.92c2.76,10.62,10.15,15.99,22.11,15.99c8.21,0,17.96-3.16,24.47-7.58l7.78,13.62c-9.59,6.87-20.61,10.34-33.12,10.34c-13.34,0-23.53-3.87-30.59-11.45c-7.11-7.58-10.58-16.94-10.58-27.83c0-11.45,3.63-20.8,10.97-28.23c7.38-7.42,16.82-11.17,28.5-11.17c10.97,0,20.17,3.43,27.28,10.18s10.7,15.83,10.7,27.55C217.79,65.13,217.51,68.02,217.12,71.06z M160.19,56.61h38.53c-1.82-9.79-8.92-15.71-18.91-15.71C169.94,40.9,162.56,46.82,160.19,56.61z"/>
+      <path d="M273.57,60.6c-2.09-1.11-8.21-3.59-18.24-7.3c-4.46-1.5-6.67-3.71-6.67-6.87c0-3.43,3.47-6.32,8.61-6.32c6.24,0,12.08,2.49,17.37,7.42l8.29-13.93c-6.71-6.2-15.12-9.32-25.11-9.32c-8.49,0-15.44,2.05-20.61,6.32c-5.13,4.26-7.78,9.63-7.78,16.26c0,8.8,4.3,15.28,13.07,19.42c1.66,0.83,4.86,2.21,9.75,3.99c4.86,1.78,7.78,2.88,9.04,3.43c3.63,1.66,5.41,3.87,5.41,6.47c0,4.26-4.46,7.3-10.42,7.3c-7.66,0-16.5-2.33-21.95-8.76l-8.57,14.41c7.46,8.17,18.2,10.62,30.4,10.62c9.04,0,16.42-2.21,21.83-6.75c5.57-4.54,8.33-10.34,8.33-17.37C286.4,71.33,282.05,65.02,273.57,60.6z"/>
+      <path d="M353.43,97.35c-6.28,4.14-13.62,6.2-22.38,6.2c-17.41,0-26.45-10.18-26.45-29.61V42.95h-12.4V26.69h12.51V6.99l19.46-6.87v26.57h25.03v16.26h-25.03v29.73c0,8.8,3.63,13.22,10.7,13.22c3.75,0,8.05-1.22,12.67-3.87L353.43,97.35z"/>
+      <path d="M434.55,71.06h-56.88c2.76,10.62,10.15,15.99,22.11,15.99c8.21,0,17.96-3.16,24.47-7.58l7.78,13.62c-9.59,6.87-20.61,10.34-33.12,10.34c-13.34,0-23.53-3.87-30.59-11.45c-7.11-7.58-10.58-16.94-10.58-27.83c0-11.45,3.63-20.8,10.97-28.23c7.38-7.42,16.82-11.17,28.5-11.17c10.97,0,20.17,3.43,27.28,10.18s10.7,15.83,10.7,27.55C435.26,65.13,434.98,68.02,434.55,71.06z M377.66,56.61h38.53c-1.82-9.79-8.92-15.71-18.91-15.71C387.38,40.9,380.03,46.82,377.66,56.61z"/>
+      <path d="M507.3,101.77V26.72h19.19v10.46c4.03-7.3,13.07-12.51,23.8-12.51c8.21,0,15.32,2.76,21,8.13c5.68,5.37,8.65,13.07,8.65,23.13v45.83h-19.62V61.15c0-11.96-6.4-18.59-15.99-18.59c-10.42,0-17.41,7.86-17.41,18.99v40.23H507.3z"/>
+      <path d="M654.51,26.72h18.63v75.04h-18.63v-8.68c-6.55,7.03-14.61,10.46-24.2,10.46c-10.86,0-19.9-3.71-27-11.29c-7.11-7.58-10.58-17.09-10.58-28.38s3.63-20.65,10.7-27.95c7.11-7.42,16.15-11.17,26.84-11.17c9.47,0,17.53,3.59,24.2,10.9v-8.92H654.51z M648.67,48.87c-4.03-4.26-9.04-6.32-15.16-6.32c-6.28,0-11.25,2.05-15.32,6.32c-3.91,4.26-5.84,9.36-5.84,15.28c0,6.04,1.93,11.17,6,15.44c4.07,4.26,9.04,6.32,15.16,6.32c6.12,0,11.13-2.05,15.16-6.32c4.03-4.26,6.12-9.36,6.12-15.44C654.78,58.27,652.69,53.17,648.67,48.87z"/>
+      <path d="M698.05,92.41c-7.5-7.3-11.25-16.82-11.25-28.23c0-11.45,3.75-20.92,11.41-28.23c7.66-7.42,17.41-11.17,29.37-11.17c15.44,0,29.09,7.58,35.33,20.92l-15.71,8.53c-4.58-7.58-11.13-11.45-19.34-11.45c-6.28,0-11.41,2.05-15.43,6.2c-4.03,3.99-6.12,9.08-6.12,15.16c0,6.2,1.93,11.29,6,15.44c4.03,3.99,9.2,6.04,15.16,6.04c7.93,0,15.99-4.7,19.34-11.29l15.87,9.24c-6.55,12.12-20.01,19.82-35.61,19.82C715.18,103.43,705.55,99.72,698.05,92.41z"/>
+      <path d="M774.71,101.77V7.03l19.07-6.87v36.36c4.03-6.75,13.22-11.84,23.92-11.84c8.21,0,15.16,2.76,20.88,8.13c5.68,5.37,8.61,13.07,8.61,23.13v45.83h-19.62V61.15c0-11.96-6.28-18.59-15.87-18.59c-10.42,0-17.41,7.86-17.41,18.99v40.23H774.71z"/>
+      <path d="M936.92,71.06h-56.88c2.76,10.62,10.15,15.99,22.11,15.99c8.21,0,17.96-3.16,24.47-7.58l7.78,13.62c-9.59,6.87-20.61,10.34-33.12,10.34c-13.34,0-23.53-3.87-30.59-11.45c-7.11-7.58-10.58-16.94-10.58-27.83c0-11.45,3.63-20.8,10.97-28.23c7.38-7.42,16.82-11.17,28.5-11.17c10.97,0,20.17,3.43,27.28,10.18s10.7,15.83,10.7,27.55C937.63,65.13,937.35,68.02,936.92,71.06z M880.03,56.61h38.53c-1.82-9.79-8.92-15.71-18.91-15.71C889.74,40.9,882.4,46.82,880.03,56.61z"/>
+      <path d="M951.13,101.77V26.72h18.79v10.07c4.58-8.13,11.57-12.12,20.88-12.12c3.08,0,6.12,0.55,9.2,1.66l-1.66,18.59c-3.2-0.95-6.28-1.5-9.04-1.5c-11.13,0-18.51,7.15-18.51,22.74v35.65h-19.66V101.77z"/>
+      <path d="M273.57,60.6c-2.09-1.11-8.21-3.59-18.24-7.3c-4.46-1.5-6.67-3.71-6.67-6.87c0-3.43,3.47-6.32,8.61-6.32c6.24,0,12.08,2.49,17.37,7.42l8.29-13.93c-6.71-6.2-15.12-9.32-25.11-9.32c-8.49,0-15.44,2.05-20.61,6.32c-5.13,4.26-7.78,9.63-7.78,16.26c0,8.8,4.3,15.28,13.07,19.42c1.66,0.83,4.86,2.21,9.75,3.99c4.86,1.78,7.78,2.88,9.04,3.43c3.63,1.66,5.41,3.87,5.41,6.47c0,4.26-4.46,7.3-10.42,7.3c-7.66,0-16.5-2.33-21.95-8.76l-8.57,14.41c7.46,8.17,18.2,10.62,30.4,10.62c9.04,0,16.42-2.21,21.83-6.75c5.57-4.54,8.33-10.34,8.33-17.37C286.4,71.33,282.05,65.02,273.57,60.6z"/>
+    </svg>
+    <div class="logo-div"></div>
+    <div>
+      <div class="page-title">AI Agent Scrum</div>
+      <div class="page-sub">Phoenix · S/4HANA · Sprint 4</div>
+    </div>
+  </div>
+  <div class="status-row">
+    <div class="badge badge-idle" id="globalBadge">● STANDBY</div>
+  </div>
+</header>
+
+<div class="app">
+
+  <!-- ROOM -->
+  <div class="room-wrap" id="roomWrap">
+    <div class="ceiling-light"></div>
+    <div class="room-label" id="roomLabel">Conference Room · Phoenix Project</div>
+
+    <!-- TABLE SCENE -->
+    <div class="table-scene" id="tableScene">
+      <div class="table">
+        <div class="table-shadow"></div>
+        <div class="table-top">
+          <div class="table-sheen"></div>
+          <!-- Laptop items on table -->
+          <div class="table-item" style="top:30px;left:80px">💻</div>
+          <div class="table-item" style="top:30px;right:80px">💻</div>
+          <div class="table-item" style="top:65px;left:50%;transform:translateX(-50%)">☕</div>
+          <div class="table-item" style="top:18px;left:50%;transform:translateX(-50%) translateX(-40px)">📊</div>
+          <div class="table-item" style="top:18px;left:50%;transform:translateX(-50%) translateX(20px)">📋</div>
+        </div>
+
+        <!-- SEATS with agents -->
+        <div class="seat seat-0">
+          <div class="agent" id="agent-0">
+            <div class="avatar-ring" id="ring-0" style="background:rgba(74,158,235,0.15)">
+              <div class="avatar-emoji">🎯</div>
+            </div>
+            <div class="agent-label">
+              <div class="agent-name">Sarah Chen</div>
+              <div class="agent-role">SCRUM MASTER</div>
+            </div>
+          </div>
+          <div class="bubble-wrap" id="bubble-0" style="bottom:calc(100% + 6px);left:50%;transform-origin:bottom center;margin-left:-90px">
+            <div class="speech-bubble bubble-down" id="bubble-content-0">
+              <div class="bubble-role" style="color:#4A9EEB">Scrum Master</div>
+              <div class="bubble-text" id="bubble-text-0"><div class="bubble-typing"><span></span><span></span><span></span></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="seat seat-1">
+          <div class="agent" id="agent-1">
+            <div class="avatar-ring" id="ring-1" style="background:rgba(155,127,232,0.15)">
+              <div class="avatar-emoji">📋</div>
+            </div>
+            <div class="agent-label">
+              <div class="agent-name">Marcus Weber</div>
+              <div class="agent-role">PRODUCT OWNER</div>
+            </div>
+          </div>
+          <div class="bubble-wrap" id="bubble-1" style="bottom:calc(100% + 6px);left:50%;transform-origin:bottom center;margin-left:-90px">
+            <div class="speech-bubble bubble-down" id="bubble-content-1">
+              <div class="bubble-role" style="color:#9B7FE8">Product Owner</div>
+              <div class="bubble-text" id="bubble-text-1"><div class="bubble-typing"><span></span><span></span><span></span></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="seat seat-2">
+          <div class="agent" id="agent-2">
+            <div class="avatar-ring" id="ring-2" style="background:rgba(61,214,140,0.15)">
+              <div class="avatar-emoji">🏗️</div>
+            </div>
+            <div class="agent-label">
+              <div class="agent-name">Priya Sharma</div>
+              <div class="agent-role">SAP ARCHITECT</div>
+            </div>
+          </div>
+          <div class="bubble-wrap" id="bubble-2" style="top:50%;right:calc(100% + 6px);transform-origin:right center;margin-top:-40px">
+            <div class="speech-bubble bubble-right" id="bubble-content-2">
+              <div class="bubble-role" style="color:#3DD68C">SAP Architect</div>
+              <div class="bubble-text" id="bubble-text-2"><div class="bubble-typing"><span></span><span></span><span></span></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="seat seat-3">
+          <div class="agent" id="agent-3">
+            <div class="avatar-ring" id="ring-3" style="background:rgba(245,166,35,0.15)">
+              <div class="avatar-emoji">🤖</div>
+            </div>
+            <div class="agent-label">
+              <div class="agent-name">Kai Nakamura</div>
+              <div class="agent-role">AI ENGINEER</div>
+            </div>
+          </div>
+          <div class="bubble-wrap" id="bubble-3" style="top:50%;left:calc(100% + 6px);transform-origin:left center;margin-top:-40px">
+            <div class="speech-bubble bubble-left" id="bubble-content-3">
+              <div class="bubble-role" style="color:#F5A623">AI Engineer</div>
+              <div class="bubble-text" id="bubble-text-3"><div class="bubble-typing"><span></span><span></span><span></span></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="seat seat-4">
+          <div class="agent" id="agent-4">
+            <div class="avatar-ring" id="ring-4" style="background:rgba(242,92,92,0.15)">
+              <div class="avatar-emoji">⚙️</div>
+            </div>
+            <div class="agent-label">
+              <div class="agent-name">Alex Torres</div>
+              <div class="agent-role">TECH CONSULTANT</div>
+            </div>
+          </div>
+          <div class="bubble-wrap" id="bubble-4" style="bottom:calc(100% + 6px);left:50%;transform-origin:bottom center;margin-left:-90px">
+            <div class="speech-bubble bubble-down" id="bubble-content-4">
+              <div class="bubble-role" style="color:#F25C5C">Tech Consultant</div>
+              <div class="bubble-text" id="bubble-text-4"><div class="bubble-typing"><span></span><span></span><span></span></div></div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /table -->
+    </div><!-- /table-scene -->
+
+    <div class="floor"></div>
+    <div class="sprint-bar">
+      <div class="sprint-item"><div class="sprint-dot" style="background:#F25C5C"></div><span class="sprint-key">Go-live:</span><span class="sprint-val">Wk 22</span></div>
+      <div class="sprint-item"><div class="sprint-dot" style="background:#F5A623"></div><span class="sprint-key">Blockers:</span><span class="sprint-val" id="blockerCount">3</span></div>
+      <div class="sprint-item"><div class="sprint-dot" style="background:#4A9EEB"></div><span class="sprint-key">Sprint:</span><span class="sprint-val">4 / 11</span></div>
+      <div class="sprint-item"><div class="sprint-dot" style="background:#3DD68C"></div><span class="sprint-key">Velocity:</span><span class="sprint-val">34 pts</span></div>
+      <div class="sprint-item" style="margin-left:auto"><span class="sprint-key">Round:</span><span class="sprint-val" id="roundCounter">0 / 3</span></div>
+    </div>
+  </div>
+
+  <!-- TRANSCRIPT PANEL -->
+  <div class="transcript-panel">
+    <div class="tp-header">
+      <div class="tp-title">Meeting Transcript</div>
+      <div class="tp-sub" id="tpSub">Waiting for meeting to start…</div>
+    </div>
+    <div class="tp-feed" id="tpFeed">
+      <div class="tp-empty" id="tpEmpty">
+        <div class="tp-empty-icon">📝</div>
+        <div class="tp-empty-text">Transcript will appear here as agents speak</div>
+      </div>
+    </div>
+    <div class="controls-bar">
+      <div class="ctrl-rounds">
+        <div class="round-pip" id="pip-0"></div>
+        <div class="round-pip" id="pip-1"></div>
+        <div class="round-pip" id="pip-2"></div>
+      </div>
+      <div class="round-label" id="roundLabel">3 rounds · 5 agents · fully automated</div>
+      <button class="start-btn" id="startBtn" onclick="startMeeting()">▶  Start Scrum Meeting</button>
+      <button class="reset-btn" onclick="resetMeeting()">↺  Reset Room</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+var PROXY = 'https://we-ai-regional-summit.emirduvif.workers.dev/';
+
+var AGENTS = [
+  {id:0,name:'Sarah Chen',role:'Scrum Master',emoji:'🎯',color:'#4A9EEB',
+   system:'You are Sarah Chen, Scrum Master on the Phoenix S/4HANA implementation at Meridian Industries AG. Week 14 of 22, Sprint 4. You facilitate the standup, track blockers, maintain pace. You are calm, direct, and structured. Keep responses to 3-4 sentences. Reference sprint velocity, burn-down, and specific blockers. No markdown. Speak naturally.'},
+  {id:1,name:'Marcus Weber',role:'Product Owner',emoji:'📋',color:'#9B7FE8',
+   system:'You are Marcus Weber, Product Owner on the Phoenix S/4HANA project at Meridian Industries AG. You manage the backlog and represent business stakeholders. Critical situation: FI/CO has 3 open defects, data migration is 60% done and behind. The client CFO wants go-live confirmation. Keep responses to 3-4 sentences. Reference backlog priorities and business urgency. No markdown. Speak naturally.'},
+  {id:2,name:'Priya Sharma',role:'SAP Architect',emoji:'🏗️',color:'#3DD68C',
+   system:'You are Priya Sharma, SAP Architect on the Phoenix S/4HANA project. Responsible for technical design and integrations. Current blockers: IDOC interface to WMS has serialization errors, profit centre derivation in MM/FI needs rework, Basis has not provisioned prod credentials. Keep responses to 3-4 sentences. Reference SAP modules, transactions, technical specifics. No markdown. Speak naturally.'},
+  {id:3,name:'Kai Nakamura',role:'AI Engineer',emoji:'🤖',color:'#F5A623',
+   system:'You are Kai Nakamura, AI Engineer on the Phoenix project. Building: financial anomaly detection on SAP Datasphere, predictive delay alerts using IBP data, LLM invoice classifier. Excited but realistic about timelines. Keep responses to 3-4 sentences. Reference your specific AI deliverables and risks. No markdown. Speak naturally.'},
+  {id:4,name:'Alex Torres',role:'Tech Consultant',emoji:'⚙️',color:'#F25C5C',
+   system:'You are Alex Torres, Technical Consultant on the Phoenix project. Handling ABAP development, BTP extensions, system testing. 12 open development objects, 3 on critical path. ABAP unit tests for profit centre logic are failing. Blocked 4 days waiting for Basis to do production refresh. Keep responses to 3-4 sentences. Give specific numbers. No markdown. Speak naturally.'}
+];
+
+var ROUNDS = [
+  {label:'Round 1 — Standup Updates', prompt:'Give your standup update. What did you accomplish yesterday? What are you working on today? What blockers do you have? Be specific to your role on the Phoenix S/4HANA project.'},
+  {label:'Round 2 — Go-Live Risk', prompt:'React to the risk assessment: the project go-live is in danger due to data migration delays and open defects. What is your perspective from your role? What must happen in the next 48 hours? Reference what others have said.'},
+  {label:'Round 3 — Commitments & Close', prompt:'State your specific commitments for today with concrete deadlines. Be direct and accountable. If you are the Scrum Master, close the meeting with a summary of the 3 most critical actions agreed.'}
+];
+
+var state = {running:false, msgs:[], round:0};
+
+function setRing(id, st) {
+  var r = document.getElementById('ring-'+id);
+  r.className = 'avatar-ring ' + (st||'');
+}
+
+function showBubble(id, typing) {
+  var bw = document.getElementById('bubble-'+id);
+  var bt = document.getElementById('bubble-text-'+id);
+  if (typing) {
+    bt.innerHTML = '<div class="bubble-typing"><span></span><span></span><span></span></div>';
+  }
+  bw.classList.add('visible');
+}
+
+function updateBubble(id, text) {
+  var bt = document.getElementById('bubble-text-'+id);
+  bt.textContent = text.length > 140 ? text.slice(0,140)+'…' : text;
+}
+
+function hideBubble(id) {
+  document.getElementById('bubble-'+id).classList.remove('visible');
+}
+
+function addTpDivider(label) {
+  var e = document.getElementById('tpEmpty');
+  if (e) e.remove();
+  var feed = document.getElementById('tpFeed');
+  var d = document.createElement('div'); d.className='tp-divider';
+  d.innerHTML='<div class="tp-div-line"></div><div class="tp-div-label">'+label+'</div><div class="tp-div-line"></div>';
+  feed.appendChild(d); feed.scrollTop=feed.scrollHeight;
+  document.getElementById('tpSub').textContent = label;
+}
+
+function addTpMessage(agent, text) {
+  var feed = document.getElementById('tpFeed');
+  var now = new Date();
+  var time = now.getHours()+':'+(now.getMinutes()<10?'0':'')+now.getMinutes();
+  var html = text.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  var d = document.createElement('div'); d.className='tp-message';
+  d.innerHTML =
+    '<div class="tp-msg-header">'+
+      '<div class="tp-avatar" style="background:'+agent.color+'22">'+agent.emoji+'</div>'+
+      '<span class="tp-name" style="color:'+agent.color+'">'+agent.name+'</span>'+
+      '<span class="tp-role-tag" style="background:'+agent.color+'18;color:'+agent.color+'">'+agent.role+'</span>'+
+      '<span class="tp-time">'+time+'</span>'+
+    '</div>'+
+    '<div class="tp-text">'+html+'</div>';
+  feed.appendChild(d); feed.scrollTop=feed.scrollHeight;
+}
+
+function setPip(round, state) {
+  var p = document.getElementById('pip-'+round);
+  if (!p) return;
+  p.className = 'round-pip ' + (state||'');
+}
+
+async function callAgent(agent, prompt) {
+  var history = state.msgs.slice(-6).map(function(m){return{role:'user',content:m};});
+  var resp = await fetch(PROXY,{
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      model:'claude-sonnet-4-20250514', max_tokens:200,
+      system:agent.system,
+      messages:history.concat([{role:'user',content:prompt}])
+    })
+  });
+  if (!resp.ok) throw new Error('API '+resp.status);
+  var d = await resp.json();
+  return d.content[0].text;
+}
+
+function sleep(ms){return new Promise(function(r){setTimeout(r,ms);});}
+
+async function runRound(ri) {
+  var round = ROUNDS[ri];
+  addTpDivider(round.label);
+  setPip(ri,'active');
+  document.getElementById('roundCounter').textContent = (ri+1)+' / 3';
+
+  for (var i=0; i<AGENTS.length; i++) {
+    if (!state.running) return;
+    var a = AGENTS[i];
+    setRing(a.id,'thinking'); showBubble(a.id,true);
+    var ctx = state.msgs.length ?
+      'Previous discussion:\n'+state.msgs.slice(-4).join('\n')+'\n\nNow: ' : '';
+    try {
+      var reply = await callAgent(a, ctx+round.prompt);
+      setRing(a.id,'speaking');
+      updateBubble(a.id, reply);
+      addTpMessage(a, reply);
+      state.msgs.push(a.name+' ('+a.role+'): '+reply);
+    } catch(e) {
+      updateBubble(a.id,'[Connection issue]');
+    }
+    await sleep(2200);
+    hideBubble(a.id);
+    setRing(a.id,'');
+    await sleep(300);
+  }
+  setPip(ri,'done');
+}
+
+async function startMeeting() {
+  if (state.running) return;
+  state.running=true;
+  var btn=document.getElementById('startBtn');
+  btn.disabled=true; btn.textContent='⏳  Meeting in progress…';
+  document.getElementById('globalBadge').className='badge badge-live';
+  document.getElementById('globalBadge').textContent='● LIVE';
+
+  // Walk-in animation
+  AGENTS.forEach(function(a){
+    document.getElementById('agent-'+a.id).className='agent entered-'+a.id;
+  });
+  await sleep(900);
+
+  try {
+    for (var r=0;r<3;r++) {
+      if (!state.running) break;
+      await runRound(r);
+      if (r<2) await sleep(800);
+    }
+  } catch(e){}
+
+  state.running=false;
+  AGENTS.forEach(function(a){setRing(a.id,'');});
+  document.getElementById('globalBadge').className='badge badge-done';
+  document.getElementById('globalBadge').textContent='● COMPLETE';
+  btn.disabled=false; btn.textContent='▶  Run Again';
+  document.getElementById('roundCounter').textContent='3 / 3 ✓';
+  document.getElementById('roundLabel').textContent='Meeting complete — 3 rounds done';
+}
+
+function resetMeeting() {
+  state.running=false; state.msgs=[]; state.round=0;
+  AGENTS.forEach(function(a){ setRing(a.id,''); hideBubble(a.id); document.getElementById('agent-'+a.id).className='agent'; });
+  document.getElementById('tpFeed').innerHTML='<div class="tp-empty" id="tpEmpty"><div class="tp-empty-icon">📝</div><div class="tp-empty-text">Transcript will appear here as agents speak</div></div>';
+  document.getElementById('tpSub').textContent='Waiting for meeting to start…';
+  document.getElementById('globalBadge').className='badge badge-idle';
+  document.getElementById('globalBadge').textContent='● STANDBY';
+  document.getElementById('startBtn').disabled=false;
+  document.getElementById('startBtn').textContent='▶  Start Scrum Meeting';
+  document.getElementById('roundCounter').textContent='0 / 3';
+  document.getElementById('roundLabel').textContent='3 rounds · 5 agents · fully automated';
+  [0,1,2].forEach(function(i){setPip(i,'');});
+}
+</script>
+</body>
+</html>
 <title>AI Agents — Scrum Meeting</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
