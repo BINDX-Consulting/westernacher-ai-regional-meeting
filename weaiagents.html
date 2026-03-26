@@ -4,402 +4,369 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI Agent Scrum — Phoenix Project</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
-html, body { height:100%; overflow:hidden; background:#1A1F2E; }
-body { font-family:'Space Grotesk',sans-serif; color:#E2E8F0; display:flex; flex-direction:column; }
+html, body { height:100%; overflow:hidden; }
+body { font-family:'Space Grotesk',sans-serif; color:#0F172A; display:flex; flex-direction:column; background:#E8F0F8; }
 
-/* HEADER */
+/* ── HEADER ── */
 .hdr {
-  height:48px; flex-shrink:0;
+  height:52px; flex-shrink:0;
   display:flex; align-items:center; justify-content:space-between;
-  padding:0 1.5rem;
-  background:rgba(15,17,26,0.95);
-  border-bottom:1px solid rgba(255,255,255,0.06);
+  padding:0 1.8rem;
+  background:#1E3A5F;
+  border-bottom:3px solid #F59E0B;
 }
-.hdr-left { display:flex; align-items:center; gap:10px; }
-.hdr-logo { font-size:13px; font-weight:700; color:#60A5FA; letter-spacing:-0.3px; }
-.hdr-div { width:1px; height:14px; background:rgba(255,255,255,0.12); }
-.hdr-title { font-size:13px; font-weight:600; color:#E2E8F0; }
-.hdr-sub { font-size:10px; color:#64748B; font-family:'JetBrains Mono',monospace; }
+.hdr-left { display:flex; align-items:center; gap:14px; }
+.hdr-div { width:1px; height:18px; background:rgba(255,255,255,0.25); }
+.hdr-title { font-size:14px; font-weight:700; color:#FFFFFF; letter-spacing:-0.2px; }
+.hdr-sub { font-size:10px; color:#93C5FD; font-family:'JetBrains Mono',monospace; margin-top:1px; }
 .hdr-badge {
-  font-size:10px; font-weight:700; padding:3px 10px; border-radius:20px;
-  border:1px solid; font-family:'JetBrains Mono',monospace;
-  letter-spacing:0.5px; text-transform:uppercase;
+  font-size:10px; font-weight:700; padding:5px 14px; border-radius:20px;
+  font-family:'JetBrains Mono',monospace; letter-spacing:0.5px; text-transform:uppercase; border:2px solid;
 }
-.badge-idle { color:#475569; border-color:rgba(255,255,255,0.08); }
-.badge-live { color:#34D399; border-color:rgba(52,211,153,0.4); background:rgba(52,211,153,0.06); animation:gp 2s infinite; }
-.badge-done { color:#60A5FA; border-color:rgba(96,165,250,0.4); background:rgba(96,165,250,0.06); }
-@keyframes gp { 0%,100%{opacity:1} 50%{opacity:0.6} }
+.badge-idle { color:#93C5FD; border-color:rgba(147,197,253,0.4); background:rgba(147,197,253,0.1); }
+.badge-live { color:#10B981; border-color:#10B981; background:rgba(16,185,129,0.15); animation:gp 1.5s infinite; }
+.badge-done { color:#F59E0B; border-color:#F59E0B; background:rgba(245,158,11,0.15); }
+@keyframes gp { 0%,100%{opacity:1} 50%{opacity:0.65} }
 
-/* MAIN */
-.main { flex:1; display:grid; grid-template-columns:1fr 320px; overflow:hidden; }
+/* ── LAYOUT ── */
+.main { flex:1; display:grid; grid-template-columns:1fr 330px; overflow:hidden; }
 
 /* ══ OFFICE ROOM ══ */
 .office {
   position:relative; overflow:hidden;
-  background: linear-gradient(180deg, #0F1420 0%, #141926 40%, #1A2035 100%);
   display:flex; align-items:center; justify-content:center;
+  background: linear-gradient(180deg, #D4E8F4 0%, #C8DFF0 35%, #D8E8F0 70%, #B8CCE0 100%);
 }
 
-/* Ceiling */
-.ceiling {
-  position:absolute; top:0; left:0; right:0; height:35%;
-  background:linear-gradient(180deg, #0A0D15 0%, transparent 100%);
+/* Ceiling stripe */
+.ceiling-band {
+  position:absolute; top:0; left:0; right:0; height:14%;
+  background:linear-gradient(180deg, #C0D4E8 0%, #D0E4F4 100%);
+  border-bottom:2px solid #B0C8E0;
 }
 
-/* Ceiling light fixture */
-.light-fixture {
-  position:absolute; top:0; left:50%; transform:translateX(-50%);
-  width:2px; height:50px;
-  background:linear-gradient(180deg, #888, #444);
+/* Ceiling light */
+.light-track {
+  position:absolute; top:2%; left:50%; transform:translateX(-50%);
+  width:40%; height:6px; background:#A8C0D8; border-radius:3px;
 }
-.light-bulb {
-  position:absolute; top:48px; left:50%; transform:translateX(-50%);
-  width:60px; height:18px;
-  background:linear-gradient(90deg, #4A6080, #C8D8F8, #4A6080);
-  border-radius:4px;
-  box-shadow:0 0 40px 15px rgba(160,200,255,0.15), 0 0 80px 30px rgba(100,150,255,0.08);
+.light-spot {
+  position:absolute; top:8%; left:50%; transform:translateX(-50%);
+  width:0; height:0;
+  border-left:120px solid transparent;
+  border-right:120px solid transparent;
+  border-top:60px solid rgba(255,255,200,0.25);
 }
-/* Secondary light */
-.light-fixture2 {
-  position:absolute; top:0; left:25%; transform:translateX(-50%);
-  width:1.5px; height:40px;
-  background:linear-gradient(180deg, #666, #333);
+.light-spot2 {
+  position:absolute; top:8%; left:25%;
+  width:0; height:0;
+  border-left:80px solid transparent;
+  border-right:80px solid transparent;
+  border-top:50px solid rgba(255,255,200,0.18);
 }
-.light-bulb2 {
-  position:absolute; top:38px; left:25%; transform:translateX(-50%);
-  width:40px; height:14px;
-  background:linear-gradient(90deg, #3A5070, #A0C0E8, #3A5070);
-  border-radius:3px;
-  box-shadow:0 0 30px 10px rgba(140,180,240,0.1);
-}
-.light-fixture3 {
-  position:absolute; top:0; left:75%; transform:translateX(-50%);
-  width:1.5px; height:40px;
-  background:linear-gradient(180deg, #666, #333);
-}
-.light-bulb3 {
-  position:absolute; top:38px; left:75%; transform:translateX(-50%);
-  width:40px; height:14px;
-  background:linear-gradient(90deg, #3A5070, #A0C0E8, #3A5070);
-  border-radius:3px;
-  box-shadow:0 0 30px 10px rgba(140,180,240,0.1);
-}
-
-/* Floor */
-.floor {
-  position:absolute; bottom:0; left:0; right:0; height:28%;
-  background:linear-gradient(180deg, #1C2235 0%, #141826 100%);
-}
-.floor-tiles {
-  position:absolute; bottom:0; left:0; right:0; height:100%;
-  background-image:
-    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
-  background-size:60px 60px;
+.light-spot3 {
+  position:absolute; top:8%; left:75%;
+  width:0; height:0;
+  border-left:80px solid transparent;
+  border-right:80px solid transparent;
+  border-top:50px solid rgba(255,255,200,0.18);
 }
 
 /* Back wall */
 .back-wall {
-  position:absolute; top:0; left:0; right:0; height:72%;
-  background:linear-gradient(180deg, #10141E 0%, #181D2A 100%);
+  position:absolute; top:0; left:0; right:0; height:65%;
+  background:linear-gradient(180deg, #CCDDF0 0%, #D8E8F8 100%);
 }
 
-/* Wall decor */
-.wall-window {
-  position:absolute; top:8%; left:6%;
-  width:120px; height:90px;
-  border:2px solid rgba(255,255,255,0.06);
-  border-radius:4px;
-  background:linear-gradient(135deg, #0A1020 0%, #0D1830 50%, #0A1020 100%);
+/* Wall panels */
+.wall-panel-left {
+  position:absolute; top:14%; left:0; width:22%;
+  bottom:35%; background:#C4D8EC; border-right:3px solid #B0C8E0;
+}
+.wall-panel-right {
+  position:absolute; top:14%; right:0; width:22%;
+  bottom:35%; background:#C4D8EC; border-left:3px solid #B0C8E0;
+}
+
+/* Windows */
+.window {
+  position:absolute; top:16%;
+  width:130px; height:100px;
+  background:linear-gradient(160deg, #87CEEB 0%, #B8E4F8 40%, #7EC8E3 100%);
+  border:4px solid #8BA8C0; border-radius:4px;
+  box-shadow:inset 0 0 20px rgba(255,255,255,0.3);
   overflow:hidden;
 }
-.wall-window::after {
+.window::before {
   content:'';
-  position:absolute; top:20%; left:10%; right:10%; bottom:10%;
-  background:linear-gradient(180deg, #1A3060 0%, #0A1830 60%, #001010 100%);
-  border-radius:2px;
+  position:absolute; top:0; left:50%; width:3px; height:100%;
+  background:rgba(139,168,192,0.8);
 }
-/* Window panes */
-.wall-window::before {
+.window::after {
   content:'';
-  position:absolute; inset:0; z-index:1;
-  background:
-    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
-  background-size:60px 90px;
+  position:absolute; top:50%; left:0; width:100%; height:3px;
+  background:rgba(139,168,192,0.8);
 }
-
-.wall-window2 {
-  position:absolute; top:8%; right:6%;
-  width:120px; height:90px;
-  border:2px solid rgba(255,255,255,0.06);
-  border-radius:4px;
-  background:linear-gradient(135deg, #0A1020 0%, #0D1830 50%, #0A1020 100%);
+/* City skyline silhouette in window */
+.win-skyline {
+  position:absolute; bottom:0; left:0; right:0; height:40%;
+  background:linear-gradient(180deg, transparent, rgba(30,58,95,0.35));
 }
-.wall-window2::after {
-  content:'';
-  position:absolute; top:20%; left:10%; right:10%; bottom:10%;
-  background:linear-gradient(180deg, #1A3060 0%, #0A1830 60%, #001010 100%);
-  border-radius:2px;
-}
+.window-left { left:7%; }
+.window-right { right:7%; }
 
 /* Whiteboard */
 .whiteboard {
-  position:absolute; top:5%; left:50%; transform:translateX(-50%);
-  width:200px; height:120px;
-  background:#F0F4F8;
-  border:3px solid #8899AA;
-  border-radius:3px;
-  display:flex; flex-direction:column;
+  position:absolute; top:14%; left:50%; transform:translateX(-50%);
+  width:220px; height:130px;
+  background:#FAFCFF; border:4px solid #7A9AB5; border-radius:3px;
+  box-shadow:2px 3px 8px rgba(0,0,0,0.15);
 }
-.wb-top { height:8px; background:#6688AA; border-radius:1px 1px 0 0; }
-.wb-body { flex:1; padding:8px; position:relative; }
-.wb-text { font-size:8px; color:#334; font-family:'JetBrains Mono',monospace; line-height:1.6; }
-.wb-marker { position:absolute; bottom:4px; right:4px; width:20px; height:5px; background:#E44; border-radius:2px; }
+.wb-header { height:10px; background:#1E3A5F; }
+.wb-tray { position:absolute; bottom:-8px; left:10px; right:10px; height:8px; background:#8BA8C0; border-radius:0 0 3px 3px; }
+.wb-content { padding:10px 12px; }
+.wb-title { font-size:7.5px; font-weight:800; color:#1E3A5F; margin-bottom:5px; text-transform:uppercase; letter-spacing:0.8px; border-bottom:1px solid #C0D4E8; padding-bottom:3px; }
+.wb-item { font-size:7px; color:#2C4A6A; font-family:'JetBrains Mono',monospace; margin-bottom:3px; line-height:1.4; }
+.wb-marker { position:absolute; bottom:-5px; right:20px; width:28px; height:7px; background:#E84444; border-radius:2px; }
+
+/* Floor */
+.floor {
+  position:absolute; bottom:0; left:0; right:0; height:36%;
+  background:linear-gradient(180deg, #C8DAE8 0%, #BDD0E0 100%);
+  border-top:2px solid #A8C0D8;
+}
+.floor-tiles {
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.3) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.3) 1px, transparent 1px),
+    linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+  background-size:80px 80px, 80px 80px, 20px 20px, 20px 20px;
+}
 
 /* Plants */
-.plant {
-  position:absolute; bottom:28%;
-  font-size:36px; line-height:1;
-  filter:drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+.plant { position:absolute; bottom:35%; font-size:44px; line-height:1; filter:drop-shadow(2px 4px 6px rgba(0,0,0,0.2)); }
+
+/* Meeting table label */
+.room-tag {
+  position:absolute; top:3%; left:50%; transform:translateX(-50%);
+  font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase;
+  color:#1E3A5F; background:rgba(255,255,255,0.7);
+  padding:4px 16px; border-radius:20px; border:1px solid rgba(30,58,95,0.2);
+  font-family:'JetBrains Mono',monospace;
+  backdrop-filter:blur(4px);
 }
 
-/* ══ CONFERENCE TABLE (centered) ══ */
+/* ── CONFERENCE TABLE SCENE (centered) ── */
 .scene {
   position:relative;
-  width:700px;
-  height:460px;
+  width:680px; height:440px;
   flex-shrink:0;
 }
 
-/* Table */
+/* TABLE */
 .conf-table {
   position:absolute;
   left:50%; top:50%;
-  transform:translate(-50%, -42%);
-  width:420px;
-  height:200px;
+  transform:translate(-50%, -40%);
+  width:400px; height:180px;
 }
-.table-surface {
+.table-top {
   position:absolute; inset:0;
-  background:linear-gradient(155deg, #2A3550 0%, #1E2840 40%, #161E30 100%);
-  border-radius:20px;
-  border:1px solid rgba(100,140,200,0.15);
+  background:linear-gradient(160deg, #8B5E3C 0%, #6B4423 40%, #5A3318 100%);
+  border-radius:18px;
+  border:3px solid #A07040;
   box-shadow:
-    0 30px 80px rgba(0,0,0,0.9),
-    inset 0 1px 0 rgba(255,255,255,0.05),
-    0 0 0 1px rgba(80,120,180,0.08);
+    0 25px 60px rgba(0,0,0,0.35),
+    inset 0 2px 0 rgba(255,255,255,0.12),
+    inset 0 -2px 0 rgba(0,0,0,0.2);
 }
-/* Table sheen */
-.table-surface::after {
+/* Wood grain sheen */
+.table-top::after {
   content:'';
-  position:absolute;
-  top:8px; left:20px; right:20px; height:25px;
-  background:linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+  position:absolute; top:6px; left:15px; right:15px; height:20px;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
   border-radius:50%;
 }
+/* Table leg shadow */
 .table-shadow {
-  position:absolute;
-  bottom:-20px; left:30px; right:30px; height:25px;
-  background:radial-gradient(ellipse, rgba(0,0,0,0.7), transparent 70%);
+  position:absolute; bottom:-18px; left:25px; right:25px; height:20px;
+  background:radial-gradient(ellipse, rgba(0,0,0,0.4), transparent 70%);
   border-radius:50%;
 }
 
 /* Items on table */
-.t-item { position:absolute; font-size:14px; opacity:0.6; }
+.t-item { position:absolute; font-size:16px; line-height:1; }
 
-/* ══ SEATS — absolute inside .scene ══ */
-/* Positions tuned to sit around the 420×200 table centered at (350, 192) in scene */
+/* ── SEATS (absolute in .scene) ── */
 .seat {
-  position:absolute;
-  display:flex; flex-direction:column; align-items:center; gap:5px;
-  opacity:0; /* hidden until walk-in */
+  position:absolute; display:flex; flex-direction:column; align-items:center; gap:6px;
+  opacity:0;
 }
 
-/* Top row */
-.seat-0 { left:130px; top:28px; }   /* top-left */
-.seat-1 { left:336px; top:28px; }   /* top-right - was 310 */
-/* Sides */
-.seat-2 { left:50px; top:165px; }   /* left */
-.seat-3 { left:548px; top:165px; }  /* right — was 520 */
-/* Bottom */
-.seat-4 { left:233px; top:305px; }  /* bottom-center */
+/* Positions around the 400×180 table centered at (340,175) in scene */
+.seat-0 { left:118px; top:22px; }    /* top-left */
+.seat-1 { left:322px; top:22px; }   /* top-right */
+.seat-2 { left:30px;  top:150px; }  /* left */
+.seat-3 { left:560px; top:150px; }  /* right */
+.seat-4 { left:220px; top:290px; }  /* bottom-center */
 
-/* Walk-in animations per seat */
-@keyframes walkin-top  { from{opacity:0;transform:translateY(-40px) scale(0.7)} to{opacity:1;transform:translateY(0) scale(1)} }
-@keyframes walkin-left { from{opacity:0;transform:translateX(-40px) scale(0.7)} to{opacity:1;transform:translateX(0) scale(1)} }
-@keyframes walkin-right{ from{opacity:0;transform:translateX(40px) scale(0.7)} to{opacity:1;transform:translateX(0) scale(1)} }
-@keyframes walkin-bot  { from{opacity:0;transform:translateY(40px) scale(0.7)} to{opacity:1;transform:translateY(0) scale(1)} }
+@keyframes wi-top  { from{opacity:0;transform:translateY(-50px) scale(0.6)} to{opacity:1;transform:translateY(0) scale(1)} }
+@keyframes wi-left { from{opacity:0;transform:translateX(-50px) scale(0.6)} to{opacity:1;transform:translateX(0) scale(1)} }
+@keyframes wi-right{ from{opacity:0;transform:translateX(50px) scale(0.6)} to{opacity:1;transform:translateX(0) scale(1)} }
+@keyframes wi-bot  { from{opacity:0;transform:translateY(50px) scale(0.6)} to{opacity:1;transform:translateY(0) scale(1)} }
 
-.seat-0.walk { animation:walkin-top  0.6s cubic-bezier(0.34,1.56,0.64,1) 0.1s both; }
-.seat-1.walk { animation:walkin-top  0.6s cubic-bezier(0.34,1.56,0.64,1) 0.3s both; }
-.seat-2.walk { animation:walkin-left 0.6s cubic-bezier(0.34,1.56,0.64,1) 0.5s both; }
-.seat-3.walk { animation:walkin-right 0.6s cubic-bezier(0.34,1.56,0.64,1) 0.7s both; }
-.seat-4.walk { animation:walkin-bot  0.6s cubic-bezier(0.34,1.56,0.64,1) 0.9s both; }
+.seat-0.walk { animation:wi-top  0.7s cubic-bezier(0.34,1.56,0.64,1) 0.0s both; }
+.seat-1.walk { animation:wi-top  0.7s cubic-bezier(0.34,1.56,0.64,1) 0.2s both; }
+.seat-2.walk { animation:wi-left 0.7s cubic-bezier(0.34,1.56,0.64,1) 0.4s both; }
+.seat-3.walk { animation:wi-right 0.7s cubic-bezier(0.34,1.56,0.64,1) 0.6s both; }
+.seat-4.walk { animation:wi-bot  0.7s cubic-bezier(0.34,1.56,0.64,1) 0.8s both; }
+
+/* Chair under avatar */
+.chair {
+  width:52px; height:10px;
+  background:linear-gradient(90deg, #6B8FAA, #8BACC0, #6B8FAA);
+  border-radius:4px;
+  border:1px solid #5A7A95;
+  box-shadow:0 3px 6px rgba(0,0,0,0.2);
+}
 
 /* Avatar */
 .av {
-  width:54px; height:54px;
-  border-radius:50%;
+  width:58px; height:58px; border-radius:50%;
   display:flex; align-items:center; justify-content:center;
-  font-size:28px; line-height:1;
-  border:2px solid rgba(255,255,255,0.08);
-  transition:all 0.4s ease;
+  font-size:30px; line-height:1;
+  border:3px solid rgba(255,255,255,0.6);
+  background:rgba(255,255,255,0.85);
+  box-shadow:0 4px 12px rgba(0,0,0,0.2);
+  transition:all 0.35s ease;
   position:relative;
-  background:rgba(255,255,255,0.05);
 }
 .av.thinking {
-  border-color:rgba(245,166,35,0.7);
-  box-shadow:0 0 0 4px rgba(245,166,35,0.12), 0 0 16px rgba(245,166,35,0.2);
-  animation:av-think 0.8s infinite;
+  border-color:#F59E0B;
+  box-shadow:0 0 0 5px rgba(245,158,11,0.25), 0 0 20px rgba(245,158,11,0.35), 0 4px 12px rgba(0,0,0,0.2);
+  animation:th-pulse 0.8s infinite;
 }
 .av.speaking {
-  border-color:rgba(52,211,153,0.8);
-  box-shadow:0 0 0 5px rgba(52,211,153,0.15), 0 0 24px rgba(52,211,153,0.25);
-  animation:av-speak 1.5s infinite;
+  border-color:#10B981;
+  box-shadow:0 0 0 6px rgba(16,185,129,0.2), 0 0 28px rgba(16,185,129,0.4), 0 4px 12px rgba(0,0,0,0.15);
+  animation:sp-pulse 1.5s infinite;
 }
-@keyframes av-think { 0%,100%{opacity:1} 50%{opacity:0.75} }
-@keyframes av-speak { 0%,100%{box-shadow:0 0 0 5px rgba(52,211,153,0.15),0 0 24px rgba(52,211,153,0.25)} 50%{box-shadow:0 0 0 8px rgba(52,211,153,0.08),0 0 32px rgba(52,211,153,0.35)} }
+@keyframes th-pulse{0%,100%{transform:scale(1)}50%{transform:scale(0.97)}}
+@keyframes sp-pulse{0%,100%{box-shadow:0 0 0 6px rgba(16,185,129,0.2),0 0 28px rgba(16,185,129,0.4),0 4px 12px rgba(0,0,0,0.15)}50%{box-shadow:0 0 0 10px rgba(16,185,129,0.1),0 0 40px rgba(16,185,129,0.5),0 4px 12px rgba(0,0,0,0.15)}}
 
-.av-name { font-size:10px; font-weight:700; color:#E2E8F0; white-space:nowrap; text-align:center; text-shadow:0 1px 4px rgba(0,0,0,0.8); }
-.av-role { font-size:8.5px; color:#60A5FA; white-space:nowrap; font-family:'JetBrains Mono',monospace; text-shadow:0 1px 4px rgba(0,0,0,0.8); }
+.av-name { font-size:11px; font-weight:800; color:#0F172A; white-space:nowrap; text-align:center; text-shadow:0 1px 3px rgba(255,255,255,0.8); }
+.av-role { font-size:9px; color:#1E3A5F; white-space:nowrap; font-family:'JetBrains Mono',monospace; font-weight:600; text-shadow:0 1px 3px rgba(255,255,255,0.8); }
 
-/* ══ SPEECH BUBBLES ══ */
+/* ── SPEECH BUBBLES ── */
 .bubble {
-  position:absolute;
-  width:200px;
-  opacity:0;
-  transform:scale(0.8);
-  transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);
-  pointer-events:none;
-  z-index:100;
+  position:absolute; width:195px;
+  opacity:0; transform:scale(0.75);
+  transition:all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  pointer-events:none; z-index:200;
 }
 .bubble.show { opacity:1; transform:scale(1); }
-.bubble-inner {
-  background:rgba(20,28,48,0.97);
-  border:1px solid rgba(96,165,250,0.25);
-  border-radius:12px;
-  padding:9px 11px;
-  font-size:11px;
-  line-height:1.5;
-  color:#CBD5E1;
-  box-shadow:0 8px 32px rgba(0,0,0,0.6);
+.binner {
+  background:#FFFFFF;
+  border:2px solid #1E3A5F;
+  border-radius:12px; padding:10px 13px;
+  font-size:11.5px; line-height:1.55; color:#0F172A;
+  box-shadow:0 6px 24px rgba(30,58,95,0.2);
   position:relative;
 }
-.bubble-inner::before {
-  content:'';
-  position:absolute;
-  width:8px; height:8px;
-  background:rgba(20,28,48,0.97);
-  border:1px solid rgba(96,165,250,0.25);
+.binner::before {
+  content:''; position:absolute;
+  width:9px; height:9px; background:#FFFFFF;
+  border:2px solid #1E3A5F;
 }
-.bbl-dn::before { bottom:-5px; left:50%; transform:translateX(-50%) rotate(45deg); border-top:none; border-left:none; }
-.bbl-up::before { top:-5px; left:50%; transform:translateX(-50%) rotate(225deg); border-top:none; border-left:none; }
-.bbl-rt::before { right:-5px; top:40%; transform:translateY(-50%) rotate(315deg); border-top:none; border-left:none; }
-.bbl-lt::before { left:-5px; top:40%; transform:translateY(-50%) rotate(135deg); border-top:none; border-left:none; }
-
-.b-role { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; font-family:'JetBrains Mono',monospace; margin-bottom:4px; }
-.b-text { color:#CBD5E1; }
-.b-dots { display:flex; align-items:center; gap:3px; padding:3px 0; }
-.b-dots span { width:5px; height:5px; border-radius:50%; background:#60A5FA; animation:bd 1.2s infinite; opacity:0.4; }
+/* tail directions */
+.b-dn::before { bottom:-6px; left:50%; transform:translateX(-50%) rotate(45deg); border-top:none; border-left:none; }
+.b-up::before { top:-6px; left:50%; transform:translateX(-50%) rotate(225deg); border-top:none; border-left:none; }
+.b-lt::before { left:-6px; top:38%; transform:translateY(-50%) rotate(135deg); border-top:none; border-left:none; }
+.b-rt::before { right:-6px; top:38%; transform:translateY(-50%) rotate(315deg); border-top:none; border-left:none; }
+.b-role { font-size:9.5px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; font-family:'JetBrains Mono',monospace; margin-bottom:4px; }
+.b-text { color:#1E293B; }
+.b-dots { display:flex; align-items:center; gap:4px; padding:4px 0; }
+.b-dots span { width:6px; height:6px; border-radius:50%; animation:bd 1.2s infinite; opacity:0.4; }
 .b-dots span:nth-child(2){animation-delay:0.2s;}
 .b-dots span:nth-child(3){animation-delay:0.4s;}
-@keyframes bd{0%,80%,100%{transform:translateY(0);opacity:0.4}40%{transform:translateY(-4px);opacity:1}}
+@keyframes bd{0%,80%,100%{transform:translateY(0);opacity:0.4}40%{transform:translateY(-5px);opacity:1}}
 
-/* Bubble positions relative to their seat */
-/* seat-0 (top-left): bubble above, right of avatar */
-#b0 { top:-105px; left:-20px; }
-/* seat-1 (top-right): bubble above, left of avatar */
-#b1 { top:-105px; left:-135px; }
-/* seat-2 (left): bubble to the right */
-#b2 { top:-30px; left:65px; }
-/* seat-3 (right): bubble to the left */
-#b3 { top:-30px; left:-215px; }
-/* seat-4 (bottom): bubble above */
-#b4 { top:-105px; left:-70px; }
+/* bubble offsets relative to each seat */
+#b0 { bottom:calc(100% + 8px); left:-65px; }
+#b1 { bottom:calc(100% + 8px); left:-125px; }
+#b2 { top:0; left:68px; width:190px; }
+#b3 { top:0; right:68px; width:190px; }
+#b4 { bottom:calc(100% + 8px); left:-70px; }
 
 /* Sprint info bar */
 .sprint-bar {
   position:absolute; bottom:0; left:0; right:0;
-  background:rgba(10,13,22,0.85);
-  border-top:1px solid rgba(255,255,255,0.05);
-  padding:7px 20px;
-  display:flex; align-items:center; gap:20px;
-  backdrop-filter:blur(10px);
+  background:rgba(255,255,255,0.88);
+  border-top:2px solid #B0C8E0;
+  padding:7px 24px;
+  display:flex; align-items:center; gap:24px;
+  backdrop-filter:blur(6px);
 }
-.si { display:flex; align-items:center; gap:5px; font-size:10px; font-family:'JetBrains Mono',monospace; }
-.si-dot { width:6px; height:6px; border-radius:50%; }
-.si-k { color:#475569; }
-.si-v { font-weight:600; color:#CBD5E1; }
+.si { display:flex; align-items:center; gap:6px; font-size:11px; font-family:'JetBrains Mono',monospace; }
+.si-dot { width:8px; height:8px; border-radius:50%; }
+.si-k { color:#64748B; font-weight:500; }
+.si-v { font-weight:800; color:#0F172A; font-size:12px; }
 
-/* ══ TRANSCRIPT ══ */
-.tp {
-  border-left:1px solid rgba(255,255,255,0.06);
-  background:#0F1320;
-  display:flex; flex-direction:column; overflow:hidden;
-}
-.tp-hdr {
-  padding:0.9rem 1.1rem 0.7rem;
-  border-bottom:1px solid rgba(255,255,255,0.06);
-  flex-shrink:0;
-}
-.tp-ttl { font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#60A5FA; font-family:'JetBrains Mono',monospace; }
-.tp-sub { font-size:11px; color:#475569; margin-top:2px; }
-.tp-feed {
-  flex:1; overflow-y:auto; padding:0.8rem 1.1rem;
-  display:flex; flex-direction:column; gap:10px;
-}
-.tp-feed::-webkit-scrollbar { width:3px; }
-.tp-feed::-webkit-scrollbar-thumb { background:#1E293B; border-radius:2px; }
-.tp-empty { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#334155; text-align:center; gap:6px; padding:2rem; }
-.tp-empty-icon { font-size:28px; opacity:0.4; }
-.tp-empty-txt { font-size:11px; line-height:1.5; }
-.tp-msg { display:flex; flex-direction:column; gap:3px; animation:tpin 0.3s ease both; }
-@keyframes tpin{from{opacity:0;transform:translateX(6px)}to{opacity:1;transform:translateX(0)}}
-.tp-mh { display:flex; align-items:center; gap:5px; }
-.tp-av { width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; flex-shrink:0; }
-.tp-nm { font-size:11px; font-weight:700; }
-.tp-rt { font-size:8.5px; padding:1px 5px; border-radius:3px; font-weight:700; text-transform:uppercase; letter-spacing:0.3px; font-family:'JetBrains Mono',monospace; }
-.tp-tm { font-size:9px; color:#334155; margin-left:auto; font-family:'JetBrains Mono',monospace; }
-.tp-tx { font-size:11.5px; color:#94A3B8; line-height:1.55; padding-left:23px; }
-.tp-tx strong { color:#60A5FA; font-weight:600; }
-.tp-div { display:flex; align-items:center; gap:6px; margin:3px 0; }
-.tp-dl { flex:1; height:1px; background:rgba(255,255,255,0.05); }
-.tp-dlbl { font-size:9px; font-weight:700; color:#3B82F6; text-transform:uppercase; letter-spacing:1px; font-family:'JetBrains Mono',monospace; padding:2px 7px; background:rgba(59,130,246,0.1); border:1px solid rgba(59,130,246,0.2); border-radius:10px; }
+/* ══ TRANSCRIPT PANEL ══ */
+.tp { border-left:2px solid #A8C0D8; background:#FFFFFF; display:flex; flex-direction:column; overflow:hidden; }
+.tp-hdr { padding:1rem 1.2rem 0.8rem; border-bottom:2px solid #E2EBF4; flex-shrink:0; background:#F0F6FC; }
+.tp-ttl { font-size:11px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:#1E3A5F; font-family:'JetBrains Mono',monospace; }
+.tp-sub { font-size:11.5px; color:#64748B; margin-top:2px; }
+.tp-feed { flex:1; overflow-y:auto; padding:0.9rem 1.2rem; display:flex; flex-direction:column; gap:11px; }
+.tp-feed::-webkit-scrollbar { width:4px; }
+.tp-feed::-webkit-scrollbar-thumb { background:#C8DAE8; border-radius:2px; }
+.tp-empty { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#94A3B8; text-align:center; gap:8px; padding:2rem; }
+.tp-empty-icon { font-size:32px; opacity:0.5; }
+.tp-empty-txt { font-size:12px; line-height:1.5; }
+.tp-msg { display:flex; flex-direction:column; gap:4px; animation:tpin 0.3s ease both; }
+@keyframes tpin{from{opacity:0;transform:translateX(8px)}to{opacity:1;transform:translateX(0)}}
+.tp-mh { display:flex; align-items:center; gap:6px; }
+.tp-av { width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0; background:#F0F6FC; border:1px solid #C8DAE8; }
+.tp-nm { font-size:12px; font-weight:800; }
+.tp-rt { font-size:9px; padding:2px 6px; border-radius:3px; font-weight:700; text-transform:uppercase; letter-spacing:0.3px; font-family:'JetBrains Mono',monospace; }
+.tp-tm { font-size:9px; color:#94A3B8; margin-left:auto; font-family:'JetBrains Mono',monospace; }
+.tp-tx { font-size:12px; color:#334155; line-height:1.6; padding-left:28px; }
+.tp-tx strong { color:#1E3A5F; font-weight:700; }
+.tp-div { display:flex; align-items:center; gap:8px; margin:3px 0; }
+.tp-dl { flex:1; height:1px; background:#E2EBF4; }
+.tp-dlbl { font-size:9px; font-weight:800; color:#FFFFFF; text-transform:uppercase; letter-spacing:1px; font-family:'JetBrains Mono',monospace; padding:3px 10px; background:#1E3A5F; border-radius:10px; white-space:nowrap; }
 
-/* CONTROLS */
-.ctrls {
-  padding:0.75rem 1.1rem;
-  border-top:1px solid rgba(255,255,255,0.06);
-  background:#0F1320;
-  flex-shrink:0;
-  display:flex; flex-direction:column; gap:7px;
-}
-.round-pips { display:flex; gap:5px; }
-.pip { flex:1; height:3px; border-radius:2px; background:rgba(255,255,255,0.06); transition:background 0.4s; }
-.pip.active { background:#3B82F6; animation:ppa 1s infinite; }
-.pip.done { background:#34D399; }
-@keyframes ppa{0%,100%{opacity:1}50%{opacity:0.5}}
-.rlbl { font-size:9.5px; color:#334155; font-family:'JetBrains Mono',monospace; text-align:center; }
+/* ══ CONTROLS ══ */
+.ctrls { padding:0.9rem 1.2rem; border-top:2px solid #E2EBF4; background:#F0F6FC; flex-shrink:0; display:flex; flex-direction:column; gap:8px; }
+.round-pips { display:flex; gap:6px; }
+.pip { flex:1; height:5px; border-radius:3px; background:#C8DAE8; transition:background 0.4s; }
+.pip.active { background:#F59E0B; animation:pp 1s infinite; }
+.pip.done { background:#10B981; }
+@keyframes pp{0%,100%{opacity:1}50%{opacity:0.5}}
+.rlbl { font-size:10px; color:#64748B; font-family:'JetBrains Mono',monospace; text-align:center; font-weight:600; }
 .btn-start {
-  width:100%; padding:10px; border:none; border-radius:8px;
-  font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:700;
+  width:100%; padding:13px; border:none; border-radius:10px;
+  font-family:'Space Grotesk',sans-serif; font-size:14px; font-weight:800;
   cursor:pointer; transition:all 0.2s;
-  background:linear-gradient(135deg, #1D4ED8, #2563EB);
-  color:#fff;
-  box-shadow:0 4px 14px rgba(37,99,235,0.35);
+  background:linear-gradient(135deg, #1E3A5F, #2563EB);
+  color:#FFFFFF;
+  box-shadow:0 4px 16px rgba(37,99,235,0.35);
+  letter-spacing:-0.2px;
 }
-.btn-start:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 6px 20px rgba(37,99,235,0.5); }
-.btn-start:disabled { background:#1E293B; color:#334155; cursor:not-allowed; transform:none; box-shadow:none; }
+.btn-start:hover:not(:disabled) { transform:translateY(-2px); box-shadow:0 8px 24px rgba(37,99,235,0.45); }
+.btn-start:active:not(:disabled) { transform:translateY(0); }
+.btn-start:disabled { background:#C8DAE8; color:#94A3B8; cursor:not-allowed; transform:none; box-shadow:none; }
 .btn-reset {
-  width:100%; padding:7px; border:1px solid rgba(255,255,255,0.07);
-  border-radius:8px; font-family:'Space Grotesk',sans-serif; font-size:11.5px; font-weight:600;
-  cursor:pointer; background:transparent; color:#475569; transition:all 0.15s;
+  width:100%; padding:9px; border:2px solid #C8DAE8; border-radius:8px;
+  font-family:'Space Grotesk',sans-serif; font-size:12px; font-weight:700;
+  cursor:pointer; background:transparent; color:#64748B; transition:all 0.15s;
 }
-.btn-reset:hover { border-color:#3B82F6; color:#60A5FA; }
+.btn-reset:hover { border-color:#1E3A5F; color:#1E3A5F; }
 </style>
 </head>
 <body>
@@ -407,14 +374,19 @@ body { font-family:'Space Grotesk',sans-serif; color:#E2E8F0; display:flex; flex
 <!-- HEADER -->
 <div class="hdr">
   <div class="hdr-left">
-    <svg width="110" height="11" viewBox="0 0 1000 103.74" fill="#60A5FA">
+    <svg width="170" height="17" viewBox="0 0 1000 103.74" fill="#FFFFFF">
       <path d="M34.07,101.77L0,0h22.54l20.72,68.45L66.64,0H79.7l23.8,68.45L123.95,0h22.54l-33.95,101.77H95.14L73.31,35.13l-21.83,66.64H34.07z"/>
       <path d="M217.12,71.06h-56.92c2.76,10.62,10.15,15.99,22.11,15.99c8.21,0,17.96-3.16,24.47-7.58l7.78,13.62c-9.59,6.87-20.61,10.34-33.12,10.34c-13.34,0-23.53-3.87-30.59-11.45c-7.11-7.58-10.58-16.94-10.58-27.83c0-11.45,3.63-20.8,10.97-28.23c7.38-7.42,16.82-11.17,28.5-11.17c10.97,0,20.17,3.43,27.28,10.18s10.7,15.83,10.7,27.55C217.79,65.13,217.51,68.02,217.12,71.06z M160.19,56.61h38.53c-1.82-9.79-8.92-15.71-18.91-15.71C169.94,40.9,162.56,46.82,160.19,56.61z"/>
       <path d="M273.57,60.6c-2.09-1.11-8.21-3.59-18.24-7.3c-4.46-1.5-6.67-3.71-6.67-6.87c0-3.43,3.47-6.32,8.61-6.32c6.24,0,12.08,2.49,17.37,7.42l8.29-13.93c-6.71-6.2-15.12-9.32-25.11-9.32c-8.49,0-15.44,2.05-20.61,6.32c-5.13,4.26-7.78,9.63-7.78,16.26c0,8.8,4.3,15.28,13.07,19.42c1.66,0.83,4.86,2.21,9.75,3.99c4.86,1.78,7.78,2.88,9.04,3.43c3.63,1.66,5.41,3.87,5.41,6.47c0,4.26-4.46,7.3-10.42,7.3c-7.66,0-16.5-2.33-21.95-8.76l-8.57,14.41c7.46,8.17,18.2,10.62,30.4,10.62c9.04,0,16.42-2.21,21.83-6.75c5.57-4.54,8.33-10.34,8.33-17.37C286.4,71.33,282.05,65.02,273.57,60.6z"/>
       <path d="M353.43,97.35c-6.28,4.14-13.62,6.2-22.38,6.2c-17.41,0-26.45-10.18-26.45-29.61V42.95h-12.4V26.69h12.51V6.99l19.46-6.87v26.57h25.03v16.26h-25.03v29.73c0,8.8,3.63,13.22,10.7,13.22c3.75,0,8.05-1.22,12.67-3.87L353.43,97.35z"/>
       <path d="M434.55,71.06h-56.88c2.76,10.62,10.15,15.99,22.11,15.99c8.21,0,17.96-3.16,24.47-7.58l7.78,13.62c-9.59,6.87-20.61,10.34-33.12,10.34c-13.34,0-23.53-3.87-30.59-11.45c-7.11-7.58-10.58-16.94-10.58-27.83c0-11.45,3.63-20.8,10.97-28.23c7.38-7.42,16.82-11.17,28.5-11.17c10.97,0,20.17,3.43,27.28,10.18s10.7,15.83,10.7,27.55C435.26,65.13,434.98,68.02,434.55,71.06z M377.66,56.61h38.53c-1.82-9.79-8.92-15.71-18.91-15.71C387.38,40.9,380.03,46.82,377.66,56.61z"/>
+      <path d="M448.76,101.77V26.72h18.79v10.07c4.58-8.13,11.57-12.12,20.88-12.12c3.08,0,6.12,0.55,9.2,1.66l-1.66,18.59c-3.2-0.95-6.28-1.5-9.04-1.5c-11.13,0-18.51,7.15-18.51,22.74v35.65h-19.66V101.77z"/>
       <path d="M507.3,101.77V26.72h19.19v10.46c4.03-7.3,13.07-12.51,23.8-12.51c8.21,0,15.32,2.76,21,8.13c5.68,5.37,8.65,13.07,8.65,23.13v45.83h-19.62V61.15c0-11.96-6.4-18.59-15.99-18.59c-10.42,0-17.41,7.86-17.41,18.99v40.23H507.3z"/>
+      <path d="M654.51,26.72h18.63v75.04h-18.63v-8.68c-6.55,7.03-14.61,10.46-24.2,10.46c-10.86,0-19.9-3.71-27-11.29c-7.11-7.58-10.58-17.09-10.58-28.38s3.63-20.65,10.7-27.95c7.11-7.42,16.15-11.17,26.84-11.17c9.47,0,17.53,3.59,24.2,10.9v-8.92H654.51z M648.67,48.87c-4.03-4.26-9.04-6.32-15.16-6.32c-6.28,0-11.25,2.05-15.32,6.32c-3.91,4.26-5.84,9.36-5.84,15.28c0,6.04,1.93,11.17,6,15.44c4.07,4.26,9.04,6.32,15.16,6.32c6.12,0,11.13-2.05,15.16-6.32c4.03-4.26,6.12-9.36,6.12-15.44C654.78,58.27,652.69,53.17,648.67,48.87z"/>
+      <path d="M698.05,92.41c-7.5-7.3-11.25-16.82-11.25-28.23c0-11.45,3.75-20.92,11.41-28.23c7.66-7.42,17.41-11.17,29.37-11.17c15.44,0,29.09,7.58,35.33,20.92l-15.71,8.53c-4.58-7.58-11.13-11.45-19.34-11.45c-6.28,0-11.41,2.05-15.43,6.2c-4.03,3.99-6.12,9.08-6.12,15.16c0,6.2,1.93,11.29,6,15.44c4.03,3.99,9.2,6.04,15.16,6.04c7.93,0,15.99-4.7,19.34-11.29l15.87,9.24c-6.55,12.12-20.01,19.82-35.61,19.82C715.18,103.43,705.55,99.72,698.05,92.41z"/>
       <path d="M774.71,101.77V7.03l19.07-6.87v36.36c4.03-6.75,13.22-11.84,23.92-11.84c8.21,0,15.16,2.76,20.88,8.13c5.68,5.37,8.61,13.07,8.61,23.13v45.83h-19.62V61.15c0-11.96-6.28-18.59-15.87-18.59c-10.42,0-17.41,7.86-17.41,18.99v40.23H774.71z"/>
+      <path d="M936.92,71.06h-56.88c2.76,10.62,10.15,15.99,22.11,15.99c8.21,0,17.96-3.16,24.47-7.58l7.78,13.62c-9.59,6.87-20.61,10.34-33.12,10.34c-13.34,0-23.53-3.87-30.59-11.45c-7.11-7.58-10.58-16.94-10.58-27.83c0-11.45,3.63-20.8,10.97-28.23c7.38-7.42,16.82-11.17,28.5-11.17c10.97,0,20.17,3.43,27.28,10.18s10.7,15.83,10.7,27.55C937.63,65.13,937.35,68.02,936.92,71.06z M880.03,56.61h38.53c-1.82-9.79-8.92-15.71-18.91-15.71C889.74,40.9,882.4,46.82,880.03,56.61z"/>
+      <path d="M951.13,101.77V26.72h18.79v10.07c4.58-8.13,11.57-12.12,20.88-12.12c3.08,0,6.12,0.55,9.2,1.66l-1.66,18.59c-3.2-0.95-6.28-1.5-9.04-1.5c-11.13,0-18.51,7.15-18.51,22.74v35.65h-19.66V101.77z"/>
     </svg>
     <div class="hdr-div"></div>
     <div>
@@ -429,125 +401,139 @@ body { font-family:'Space Grotesk',sans-serif; color:#E2E8F0; display:flex; flex
 
   <!-- OFFICE ROOM -->
   <div class="office">
-    <div class="ceiling"></div>
+    <div class="ceiling-band"></div>
     <div class="back-wall"></div>
+    <div class="wall-panel-left"></div>
+    <div class="wall-panel-right"></div>
     <div class="floor"><div class="floor-tiles"></div></div>
 
-    <!-- Lights -->
-    <div class="light-fixture"></div>
-    <div class="light-bulb"></div>
-    <div class="light-fixture2"></div>
-    <div class="light-bulb2"></div>
-    <div class="light-fixture3"></div>
-    <div class="light-bulb3"></div>
+    <div class="light-track"></div>
+    <div class="light-spot"></div>
+    <div class="light-spot2"></div>
+    <div class="light-spot3"></div>
 
     <!-- Windows -->
-    <div class="wall-window"></div>
-    <div class="wall-window2"></div>
+    <div class="window window-left"><div class="win-skyline"></div></div>
+    <div class="window window-right"><div class="win-skyline"></div></div>
 
     <!-- Whiteboard -->
     <div class="whiteboard">
-      <div class="wb-top"></div>
-      <div class="wb-body">
-        <div class="wb-text">Sprint 4 Goals:<br>✓ FI/CO defects<br>✓ Data migration<br>⚡ Go-live prep<br>⚠ IDOC fix</div>
-        <div class="wb-marker"></div>
+      <div class="wb-header"></div>
+      <div class="wb-content">
+        <div class="wb-title">Sprint 4 · Phoenix S/4HANA</div>
+        <div class="wb-item">✅ FI/CO defect resolution</div>
+        <div class="wb-item">⚡ Data migration (60% done)</div>
+        <div class="wb-item">⚠️  IDOC interface fix</div>
+        <div class="wb-item">🤖 AI anomaly detection</div>
+        <div class="wb-item">🎯 Go-live: Week 22</div>
       </div>
+      <div class="wb-tray"></div>
+      <div class="wb-marker"></div>
     </div>
 
     <!-- Plants -->
-    <div class="plant" style="left:2%;font-size:42px">🌿</div>
-    <div class="plant" style="right:3%;font-size:38px">🌱</div>
+    <div class="plant" style="left:2%">🌿</div>
+    <div class="plant" style="right:2.5%">🌱</div>
+    <div class="plant" style="left:14%;font-size:32px">🪴</div>
 
-    <!-- THE SCENE (table + seats) -->
+    <div class="room-tag">Conference Room B · Meridian Industries AG</div>
+
+    <!-- SCENE -->
     <div class="scene">
 
       <!-- TABLE -->
       <div class="conf-table">
         <div class="table-shadow"></div>
-        <div class="table-surface">
-          <div class="t-item" style="top:22px;left:70px">💻</div>
-          <div class="t-item" style="top:22px;right:70px">💻</div>
-          <div class="t-item" style="top:50px;left:50%;transform:translateX(-50%) translateX(-30px)">📊</div>
-          <div class="t-item" style="top:50px;left:50%;transform:translateX(-50%) translateX(30px)">📋</div>
-          <div class="t-item" style="top:80px;left:50%;transform:translateX(-50%)">☕</div>
-          <div class="t-item" style="top:100px;left:30px">📱</div>
-          <div class="t-item" style="top:100px;right:30px">📱</div>
+        <div class="table-top">
+          <div class="t-item" style="top:18px;left:55px">💻</div>
+          <div class="t-item" style="top:18px;right:55px">💻</div>
+          <div class="t-item" style="top:50px;left:50%;transform:translateX(-50%) translateX(-25px)">📊</div>
+          <div class="t-item" style="top:50px;left:50%;transform:translateX(-50%) translateX(25px)">📋</div>
+          <div class="t-item" style="top:82px;left:50%;transform:translateX(-50%)">☕</div>
+          <div class="t-item" style="top:100px;left:25px;font-size:13px">📱</div>
+          <div class="t-item" style="top:100px;right:25px;font-size:13px">📱</div>
+          <div class="t-item" style="top:18px;left:50%;transform:translateX(-50%);font-size:13px">🖊️</div>
         </div>
       </div>
 
-      <!-- SEAT 0 — top-left — Sarah Chen (Scrum Master) -->
+      <!-- SEAT 0 — Sarah Chen (Scrum Master) -->
       <div class="seat seat-0" id="seat-0">
         <div class="bubble" id="b0">
-          <div class="bubble-inner bbl-dn">
-            <div class="b-role" style="color:#60A5FA">Scrum Master</div>
-            <div class="b-text" id="bt0"><div class="b-dots"><span></span><span></span><span></span></div></div>
+          <div class="binner b-dn">
+            <div class="b-role" style="color:#1E3A5F">Scrum Master</div>
+            <div class="b-text" id="bt0"><div class="b-dots"><span style="background:#1E3A5F"></span><span style="background:#1E3A5F"></span><span style="background:#1E3A5F"></span></div></div>
           </div>
         </div>
         <div class="av" id="av0">👩‍💼</div>
         <div class="av-name">Sarah Chen</div>
         <div class="av-role">SCRUM MASTER</div>
+        <div class="chair"></div>
       </div>
 
-      <!-- SEAT 1 — top-right — Marcus Weber (Product Owner) -->
+      <!-- SEAT 1 — Marcus Weber (Product Owner) -->
       <div class="seat seat-1" id="seat-1">
         <div class="bubble" id="b1">
-          <div class="bubble-inner bbl-dn">
-            <div class="b-role" style="color:#A78BFA">Product Owner</div>
-            <div class="b-text" id="bt1"><div class="b-dots"><span></span><span></span><span></span></div></div>
+          <div class="binner b-dn">
+            <div class="b-role" style="color:#6D28D9">Product Owner</div>
+            <div class="b-text" id="bt1"><div class="b-dots"><span style="background:#6D28D9"></span><span style="background:#6D28D9"></span><span style="background:#6D28D9"></span></div></div>
           </div>
         </div>
         <div class="av" id="av1">👨‍💻</div>
         <div class="av-name">Marcus Weber</div>
         <div class="av-role">PRODUCT OWNER</div>
+        <div class="chair"></div>
       </div>
 
-      <!-- SEAT 2 — left — Priya Sharma (SAP Architect) -->
+      <!-- SEAT 2 — Priya Sharma (SAP Architect) -->
       <div class="seat seat-2" id="seat-2">
         <div class="av" id="av2">👩‍🔬</div>
         <div class="av-name">Priya Sharma</div>
         <div class="av-role">SAP ARCHITECT</div>
-        <div class="bubble" id="b2" style="position:absolute;top:-10px;left:65px;width:190px;">
-          <div class="bubble-inner bbl-lt">
-            <div class="b-role" style="color:#34D399">SAP Architect</div>
-            <div class="b-text" id="bt2"><div class="b-dots"><span></span><span></span><span></span></div></div>
+        <div class="chair"></div>
+        <div class="bubble" id="b2" style="position:absolute;top:0;left:68px;width:185px">
+          <div class="binner b-lt">
+            <div class="b-role" style="color:#065F46">SAP Architect</div>
+            <div class="b-text" id="bt2"><div class="b-dots"><span style="background:#065F46"></span><span style="background:#065F46"></span><span style="background:#065F46"></span></div></div>
           </div>
         </div>
       </div>
 
-      <!-- SEAT 3 — right — Kai Nakamura (AI Engineer) -->
+      <!-- SEAT 3 — Kai Nakamura (AI Engineer) -->
       <div class="seat seat-3" id="seat-3">
         <div class="av" id="av3">🧑‍🚀</div>
         <div class="av-name">Kai Nakamura</div>
         <div class="av-role">AI ENGINEER</div>
-        <div class="bubble" id="b3" style="position:absolute;top:-10px;right:65px;width:190px;">
-          <div class="bubble-inner bbl-rt">
-            <div class="b-role" style="color:#FBBF24">AI Engineer</div>
-            <div class="b-text" id="bt3"><div class="b-dots"><span></span><span></span><span></span></div></div>
+        <div class="chair"></div>
+        <div class="bubble" id="b3" style="position:absolute;top:0;right:68px;width:185px">
+          <div class="binner b-rt">
+            <div class="b-role" style="color:#92400E">AI Engineer</div>
+            <div class="b-text" id="bt3"><div class="b-dots"><span style="background:#92400E"></span><span style="background:#92400E"></span><span style="background:#92400E"></span></div></div>
           </div>
         </div>
       </div>
 
-      <!-- SEAT 4 — bottom — Alex Torres (Tech Consultant) -->
+      <!-- SEAT 4 — Alex Torres (Tech Consultant) -->
       <div class="seat seat-4" id="seat-4">
         <div class="bubble" id="b4">
-          <div class="bubble-inner bbl-dn">
-            <div class="b-role" style="color:#F87171">Tech Consultant</div>
-            <div class="b-text" id="bt4"><div class="b-dots"><span></span><span></span><span></span></div></div>
+          <div class="binner b-dn">
+            <div class="b-role" style="color:#991B1B">Tech Consultant</div>
+            <div class="b-text" id="bt4"><div class="b-dots"><span style="background:#991B1B"></span><span style="background:#991B1B"></span><span style="background:#991B1B"></span></div></div>
           </div>
         </div>
         <div class="av" id="av4">👨‍🔧</div>
         <div class="av-name">Alex Torres</div>
         <div class="av-role">TECH CONSULTANT</div>
+        <div class="chair"></div>
       </div>
 
     </div><!-- /scene -->
 
     <!-- Sprint bar -->
     <div class="sprint-bar">
-      <div class="si"><div class="si-dot" style="background:#F87171"></div><span class="si-k">Go-live:</span><span class="si-v">Wk 22</span></div>
-      <div class="si"><div class="si-dot" style="background:#FBBF24"></div><span class="si-k">Blockers:</span><span class="si-v" id="bcount">3</span></div>
-      <div class="si"><div class="si-dot" style="background:#60A5FA"></div><span class="si-k">Sprint:</span><span class="si-v">4 / 11</span></div>
-      <div class="si"><div class="si-dot" style="background:#34D399"></div><span class="si-k">Velocity:</span><span class="si-v">34 pts</span></div>
+      <div class="si"><div class="si-dot" style="background:#EF4444"></div><span class="si-k">Go-live:</span><span class="si-v">Wk 22</span></div>
+      <div class="si"><div class="si-dot" style="background:#F59E0B"></div><span class="si-k">Blockers:</span><span class="si-v" id="bcount">3 open</span></div>
+      <div class="si"><div class="si-dot" style="background:#3B82F6"></div><span class="si-k">Sprint:</span><span class="si-v">4 / 11</span></div>
+      <div class="si"><div class="si-dot" style="background:#10B981"></div><span class="si-k">Velocity:</span><span class="si-v">34 pts</span></div>
       <div class="si" style="margin-left:auto"><span class="si-k">Round:</span><span class="si-v" id="rcnt">0 / 3</span></div>
     </div>
   </div>
@@ -556,12 +542,12 @@ body { font-family:'Space Grotesk',sans-serif; color:#E2E8F0; display:flex; flex
   <div class="tp">
     <div class="tp-hdr">
       <div class="tp-ttl">Meeting Transcript</div>
-      <div class="tp-sub" id="tp-sub">Waiting to start…</div>
+      <div class="tp-sub" id="tpsub">Waiting for meeting to start…</div>
     </div>
-    <div class="tp-feed" id="tp-feed">
-      <div class="tp-empty" id="tp-empty">
+    <div class="tp-feed" id="tpfeed">
+      <div class="tp-empty" id="tpempty">
         <div class="tp-empty-icon">📝</div>
-        <div class="tp-empty-txt">Transcript appears here as agents speak</div>
+        <div class="tp-empty-txt">Transcript appears here as agents speak live</div>
       </div>
     </div>
     <div class="ctrls">
@@ -572,140 +558,126 @@ body { font-family:'Space Grotesk',sans-serif; color:#E2E8F0; display:flex; flex
       </div>
       <div class="rlbl" id="rlbl">3 rounds · 5 agents · fully automated</div>
       <button class="btn-start" id="btnStart" onclick="startMeeting()">▶  Start Scrum Meeting</button>
-      <button class="btn-reset" onclick="resetMeeting()">↺  Reset</button>
+      <button class="btn-reset" onclick="resetMeeting()">↺  Reset Room</button>
     </div>
   </div>
 </div>
 
 <script>
-var PROXY = 'https://we-ai-regional-summit.emirduvif.workers.dev/';
-var AGENTS = [
-  {id:0,name:'Sarah Chen',role:'Scrum Master',color:'#60A5FA',tagBg:'rgba(96,165,250,0.12)',
-   sys:'You are Sarah Chen, Scrum Master for the Phoenix S/4HANA implementation at Meridian Industries AG. Week 14 of 22, Sprint 4. Facilitate the standup, track blockers, maintain pace. Calm, direct, structured. 3-4 sentences. Reference sprint velocity, burn-down, specific blockers. No markdown. Natural speech.'},
-  {id:1,name:'Marcus Weber',role:'Product Owner',color:'#A78BFA',tagBg:'rgba(167,139,250,0.12)',
-   sys:'You are Marcus Weber, Product Owner on the Phoenix S/4HANA project at Meridian Industries AG. Manage backlog and represent business stakeholders. Critical: FI/CO has 3 open defects, data migration 60% done and behind. CFO wants go-live confirmation. 3-4 sentences. Reference backlog and business urgency. No markdown. Natural speech.'},
-  {id:2,name:'Priya Sharma',role:'SAP Architect',color:'#34D399',tagBg:'rgba(52,211,153,0.12)',
-   sys:'You are Priya Sharma, SAP Architect on the Phoenix project. Responsible for technical design and integrations. Blockers: IDOC interface to WMS has serialization errors, profit centre derivation in MM/FI needs rework, Basis has not provisioned prod credentials. 3-4 sentences. Reference SAP modules and specific technical issues. No markdown. Natural speech.'},
-  {id:3,name:'Kai Nakamura',role:'AI Engineer',color:'#FBBF24',tagBg:'rgba(251,191,36,0.12)',
-   sys:'You are Kai Nakamura, AI Engineer on the Phoenix project. Building: financial anomaly detection on SAP Datasphere, predictive delay alerts using IBP data, LLM invoice classifier. Excited but realistic about timelines. 3-4 sentences. Reference specific AI deliverables and risks. No markdown. Natural speech.'},
-  {id:4,name:'Alex Torres',role:'Tech Consultant',color:'#F87171',tagBg:'rgba(248,113,113,0.12)',
-   sys:'You are Alex Torres, Technical Consultant on the Phoenix project. ABAP development, BTP extensions, system testing. 12 open development objects, 3 critical path. ABAP unit tests for profit centre logic failing. Blocked 4 days waiting for Basis production refresh. 3-4 sentences. Specific numbers. No markdown. Natural speech.'}
+var PROXY='https://we-ai-regional-summit.emirduvif.workers.dev/';
+var AGENTS=[
+  {id:0,name:'Sarah Chen',role:'Scrum Master',emoji:'👩‍💼',color:'#1E3A5F',bg:'rgba(30,58,95,0.1)',
+   sys:'You are Sarah Chen, Scrum Master for the Phoenix S/4HANA implementation at Meridian Industries AG. Week 14 of 22, Sprint 4. Facilitate standup, track blockers, maintain pace. Calm, direct, structured. 3-4 sentences. Reference sprint velocity, burn-down, specific blockers. No markdown. Natural speech.'},
+  {id:1,name:'Marcus Weber',role:'Product Owner',emoji:'👨‍💻',color:'#6D28D9',bg:'rgba(109,40,217,0.1)',
+   sys:'You are Marcus Weber, Product Owner on the Phoenix S/4HANA project. Manage backlog, represent business stakeholders. Critical: FI/CO has 3 open defects, data migration 60% done and behind, CFO wants go-live confirmation. 3-4 sentences. Business urgency. No markdown. Natural speech.'},
+  {id:2,name:'Priya Sharma',role:'SAP Architect',emoji:'👩‍🔬',color:'#065F46',bg:'rgba(6,95,70,0.1)',
+   sys:'You are Priya Sharma, SAP Architect on Phoenix. Blockers: IDOC interface to WMS has serialization errors, profit centre derivation in MM/FI needs rework, Basis has not provisioned prod credentials. 3-4 sentences. Specific SAP technical issues. No markdown. Natural speech.'},
+  {id:3,name:'Kai Nakamura',role:'AI Engineer',emoji:'🧑‍🚀',color:'#92400E',bg:'rgba(146,64,14,0.1)',
+   sys:'You are Kai Nakamura, AI Engineer on Phoenix. Building: financial anomaly detection on SAP Datasphere, predictive delay alerts on IBP data, LLM invoice classifier. Excited but realistic. 3-4 sentences. Specific AI deliverables and risks. No markdown. Natural speech.'},
+  {id:4,name:'Alex Torres',role:'Tech Consultant',emoji:'👨‍🔧',color:'#991B1B',bg:'rgba(153,27,27,0.1)',
+   sys:'You are Alex Torres, Technical Consultant on Phoenix. 12 open ABAP objects, 3 on critical path. Unit tests for profit centre logic failing. Blocked 4 days for Basis to do production refresh. 3-4 sentences. Specific numbers. No markdown. Natural speech.'}
 ];
-var ROUNDS = [
-  {label:'Round 1 — Standup Updates',prompt:'Give your standup update for the Phoenix S/4HANA project. What did you accomplish yesterday? What are you working on today? What blockers do you have? Be specific to your role.'},
-  {label:'Round 2 — Go-Live Risk',prompt:'Respond to the risk: go-live is at risk due to data migration delays and open defects. What is your perspective? What must happen in the next 48 hours? Reference what others said.'},
-  {label:'Round 3 — Commitments',prompt:'State your specific commitments for today with concrete deadlines. Be direct. If you are the Scrum Master, close the meeting with the 3 most critical agreed actions.'}
+var ROUNDS=[
+  {label:'Round 1 — Standup Updates',prompt:'Give your standup update. Yesterday? Today? Blockers? Be specific to your role on the Phoenix S/4HANA project.'},
+  {label:'Round 2 — Go-Live Risk',prompt:'The go-live is at risk: data migration delayed, open defects unresolved. What is your view? What must happen in 48 hours? Reference what others said.'},
+  {label:'Round 3 — Commitments & Close',prompt:'State your specific commitments for today with deadlines. Be direct. Scrum Master: close with the 3 most critical agreed actions.'}
 ];
 var state={running:false,msgs:[],done:false};
-
 function avEl(id){return document.getElementById('av'+id);}
 function bEl(id){return document.getElementById('b'+id);}
 function btEl(id){return document.getElementById('bt'+id);}
-function seatEl(id){return document.getElementById('seat-'+id);}
-
-function setAv(id,st){
-  var a=avEl(id); a.className='av';
-  if(st) a.className='av '+st;
-}
+function setAv(id,st){var a=avEl(id);a.className='av'+(st?' '+st:'');}
 function showBubble(id,typing){
-  var b=bEl(id),bt=btEl(id);
-  if(typing) bt.innerHTML='<div class="b-dots"><span></span><span></span><span></span></div>';
-  b.classList.add('show');
+  var bt=btEl(id),a=AGENTS[id];
+  if(typing) bt.innerHTML='<div class="b-dots"><span style="background:'+a.color+'"></span><span style="background:'+a.color+'"></span><span style="background:'+a.color+'"></span></div>';
+  bEl(id).classList.add('show');
 }
-function updateBubble(id,txt){
-  btEl(id).textContent=txt.length>150?txt.slice(0,150)+'…':txt;
-}
-function hideBubble(id){ bEl(id).classList.remove('show'); }
-
+function updateBubble(id,txt){btEl(id).textContent=txt.length>160?txt.slice(0,160)+'…':txt;}
+function hideBubble(id){bEl(id).classList.remove('show');}
 function addDiv(label){
-  var e=document.getElementById('tp-empty'); if(e) e.remove();
-  var f=document.getElementById('tp-feed');
-  var d=document.createElement('div'); d.className='tp-div';
+  var e=document.getElementById('tpempty');if(e)e.remove();
+  var f=document.getElementById('tpfeed');
+  var d=document.createElement('div');d.className='tp-div';
   d.innerHTML='<div class="tp-dl"></div><div class="tp-dlbl">'+label+'</div><div class="tp-dl"></div>';
-  f.appendChild(d); f.scrollTop=f.scrollHeight;
-  document.getElementById('tp-sub').textContent=label;
+  f.appendChild(d);f.scrollTop=f.scrollHeight;
+  document.getElementById('tpsub').textContent=label;
 }
 function addMsg(ag,txt){
-  var f=document.getElementById('tp-feed');
-  var now=new Date(); var t=now.getHours()+':'+(now.getMinutes()<10?'0':'')+now.getMinutes();
+  var f=document.getElementById('tpfeed');
+  var now=new Date(),t=now.getHours()+':'+(now.getMinutes()<10?'0':'')+now.getMinutes();
   var html=txt.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
-  var d=document.createElement('div'); d.className='tp-msg';
-  d.innerHTML='<div class="tp-mh"><div class="tp-av" style="background:'+ag.tagBg+'">'+['👩‍💼','👨‍💻','👩‍🔬','🧑‍🚀','👨‍🔧'][ag.id]+'</div><span class="tp-nm" style="color:'+ag.color+'">'+ag.name+'</span><span class="tp-rt" style="background:'+ag.tagBg+';color:'+ag.color+'">'+ag.role+'</span><span class="tp-tm">'+t+'</span></div><div class="tp-tx">'+html+'</div>';
-  f.appendChild(d); f.scrollTop=f.scrollHeight;
+  var d=document.createElement('div');d.className='tp-msg';
+  d.innerHTML='<div class="tp-mh"><div class="tp-av">'+ag.emoji+'</div><span class="tp-nm" style="color:'+ag.color+'">'+ag.name+'</span><span class="tp-rt" style="background:'+ag.bg+';color:'+ag.color+'">'+ag.role+'</span><span class="tp-tm">'+t+'</span></div><div class="tp-tx">'+html+'</div>';
+  f.appendChild(d);f.scrollTop=f.scrollHeight;
 }
-function setPip(i,st){ var p=document.getElementById('pip'+i); p.className='pip'+(st?' '+st:''); }
-
+function setPip(i,st){document.getElementById('pip'+i).className='pip'+(st?' '+st:'');}
+function sleep(ms){return new Promise(function(r){setTimeout(r,ms);});}
 async function callAgent(ag,prompt){
   var history=state.msgs.slice(-4).map(function(m){return{role:'user',content:m};});
-  for(var attempt=0;attempt<2;attempt++){
+  for(var att=0;att<2;att++){
     try{
       var r=await fetch(PROXY,{method:'POST',headers:{'Content-Type':'application/json'},
         body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:200,system:ag.sys,
           messages:history.concat([{role:'user',content:prompt}])})});
       if(!r.ok) throw new Error('API '+r.status);
-      var d=await r.json(); return d.content[0].text;
-    }catch(e){ if(attempt===0 && (e.message.includes('fetch')||e.message.includes('network'))){await sleep(1500);continue;} throw e; }
+      var d=await r.json();return d.content[0].text;
+    }catch(e){if(att===0){await sleep(1500);continue;}throw e;}
   }
 }
-function sleep(ms){return new Promise(function(r){setTimeout(r,ms);});}
-
 async function runRound(ri){
   var round=ROUNDS[ri];
   addDiv(round.label);
   setPip(ri,'active');
   document.getElementById('rcnt').textContent=(ri+1)+' / 3';
   for(var i=0;i<AGENTS.length;i++){
-    if(!state.running) return;
+    if(!state.running)return;
     var ag=AGENTS[i];
-    setAv(ag.id,'thinking'); showBubble(ag.id,true);
-    var ctx=state.msgs.length?'Previous:\n'+state.msgs.slice(-4).join('\n')+'\n\nNow: ':'';
+    setAv(ag.id,'thinking');showBubble(ag.id,true);
+    var ctx=state.msgs.length?'Previous discussion:\n'+state.msgs.slice(-4).join('\n')+'\n\nNow: ':'';
     try{
       var reply=await callAgent(ag,ctx+round.prompt);
-      setAv(ag.id,'speaking'); updateBubble(ag.id,reply); addMsg(ag,reply);
+      setAv(ag.id,'speaking');updateBubble(ag.id,reply);addMsg(ag,reply);
       state.msgs.push(ag.name+' ('+ag.role+'): '+reply);
-    }catch(e){ updateBubble(ag.id,'Error: '+e.message.slice(0,80)); console.error('Agent '+ag.id+' error:',e.message); }
-    await sleep(2400);
-    hideBubble(ag.id); setAv(ag.id,'');
-    await sleep(350);
+    }catch(e){updateBubble(ag.id,'Error: '+e.message.slice(0,60));}
+    await sleep(2600);
+    hideBubble(ag.id);setAv(ag.id,'');
+    await sleep(400);
   }
   setPip(ri,'done');
 }
-
 async function startMeeting(){
-  if(state.running) return;
+  if(state.running)return;
   state.running=true;
   var btn=document.getElementById('btnStart');
-  btn.disabled=true; btn.textContent='⏳  Meeting in progress…';
+  btn.disabled=true;btn.textContent='⏳  Meeting in progress…';
   document.getElementById('badge').className='hdr-badge badge-live';
   document.getElementById('badge').textContent='● LIVE';
-  // Walk-in
-  for(var i=0;i<5;i++) seatEl(i).classList.add('walk');
-  await sleep(1200);
+  for(var i=0;i<5;i++) document.getElementById('seat-'+i).classList.add('walk');
+  await sleep(1400);
   try{
     for(var r=0;r<3;r++){
-      if(!state.running) break;
+      if(!state.running)break;
       await runRound(r);
-      if(r<2) await sleep(800);
+      if(r<2)await sleep(900);
     }
   }catch(e){}
   state.running=false;
   AGENTS.forEach(function(ag){setAv(ag.id,'');hideBubble(ag.id);});
   document.getElementById('badge').className='hdr-badge badge-done';
   document.getElementById('badge').textContent='● COMPLETE';
-  btn.disabled=false; btn.textContent='▶  Run Again';
+  btn.disabled=false;btn.textContent='▶  Run Again';
   document.getElementById('rcnt').textContent='3 / 3 ✓';
-  document.getElementById('rlbl').textContent='Meeting complete';
+  document.getElementById('rlbl').textContent='Meeting complete — 3 rounds done';
 }
-
 function resetMeeting(){
-  state.running=false; state.msgs=[];
-  AGENTS.forEach(function(ag){setAv(ag.id,'');hideBubble(ag.id);seatEl(ag.id).classList.remove('walk');});
-  document.getElementById('tp-feed').innerHTML='<div class="tp-empty" id="tp-empty"><div class="tp-empty-icon">📝</div><div class="tp-empty-txt">Transcript appears here as agents speak</div></div>';
-  document.getElementById('tp-sub').textContent='Waiting to start…';
+  state.running=false;state.msgs=[];
+  AGENTS.forEach(function(ag){setAv(ag.id,'');hideBubble(ag.id);document.getElementById('seat-'+ag.id).classList.remove('walk');});
+  document.getElementById('tpfeed').innerHTML='<div class="tp-empty" id="tpempty"><div class="tp-empty-icon">📝</div><div class="tp-empty-txt">Transcript appears here as agents speak live</div></div>';
+  document.getElementById('tpsub').textContent='Waiting for meeting to start…';
   document.getElementById('badge').className='hdr-badge badge-idle';
   document.getElementById('badge').textContent='● STANDBY';
   var btn=document.getElementById('btnStart');
-  btn.disabled=false; btn.textContent='▶  Start Scrum Meeting';
+  btn.disabled=false;btn.textContent='▶  Start Scrum Meeting';
   document.getElementById('rcnt').textContent='0 / 3';
   document.getElementById('rlbl').textContent='3 rounds · 5 agents · fully automated';
   [0,1,2].forEach(function(i){setPip(i,'');});
